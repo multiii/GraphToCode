@@ -1,3 +1,8 @@
+<head>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lexend:wght@100..900&display=swap" rel="stylesheet">
+</head>
 
 <body style="padding: 0; margin: 0;">
 <canvas id="canvas" style="width: 100%; height: 100%;"></canvas>
@@ -48,18 +53,24 @@ function renderGrid(){
 
 
 function renderNode(node){
-    ctx.fillStyle = "#777";
+
+    let precomputedHeight = 90;
+
+    ctx.strokeStyle = "black"; RenderProperties.colors.secondary2;
+    ctx.lineWidth = 1;
+
+    ctx.fillStyle = "#B9B9B9";
     ctx.fillRect(node.x, node.y, node.width, node.height);
+    ctx.strokeRect(node.x, node.y, node.width, precomputedHeight);
+    
 
     let type = "void";
     let namespace = "";
     let symbol = "test";
 
-    let textSize = 20;
+    let textSize = 25;
 
-    ctx.font = "20px serif";
-    ctx.strokeStyle = "black"; RenderProperties.colors.secondary2;
-    ctx.lineWidth = 1;
+    ctx.font = "20px lexend";
 
     let typeWidth = ctx.measureText(type).width+6;
     let namespaceWidth = ctx.measureText(namespace).width+6*ctx.measureText(namespace).width;
@@ -78,10 +89,38 @@ function renderNode(node){
     ctx.fillRect(node.x+typeWidth+namespaceWidth, node.y, node.width-typeWidth-namespaceWidth, textSize+6);
     ctx.strokeRect(node.x+typeWidth+namespaceWidth, node.y, node.width-typeWidth-namespaceWidth, textSize+6);
 
-    ctx.fillStyle = "black";
+    ctx.fillStyle = "white";
     ctx.fillText(type, node.x+3, node.y+textSize);
+    ctx.fillStyle = "black";
     ctx.fillText(namespace, node.x+typeWidth+3, node.y+textSize);
     ctx.fillText(symbol, node.x+typeWidth+namespaceWidth+3, node.y+textSize);
+
+    let inputText = "INPUTS";
+    ctx.font = "15px lexend";
+    ctx.fillText(inputText, node.x+4, 2*textSize+10);
+
+    let inputTop = 2*textSize+8 + 10;
+
+    for(let i = 0; i < 0; i++){
+        ctx.fillStyle = "white";
+        ctx.beginPath();
+        ctx.roundRect(node.x+4, inputTop, node.width-8, 25, 5);
+        ctx.fill();
+        ctx.stroke();
+        inputTop += 29;
+    }
+    ctx.fillStyle = "black";
+    ctx.fillText("DESCRIPTION", node.x+4, inputTop+15);
+    inputTop += 20;
+
+    let descriptionHeight = 0;
+
+    ctx.fillStyle = "white";
+    ctx.beginPath();
+    ctx.roundRect(node.x+4, inputTop, node.width-8, descriptionHeight, 5);
+    ctx.fill();
+    ctx.stroke();
+    inputTop += 29;
 }
 
 setupCanvasTest();
@@ -91,7 +130,7 @@ function render(){
 
     renderGrid();
 
-    renderNode({x: 10, y: 10, width: 200, height: 300});
+    renderNode({x: 10, y: 10, width: 250, height: 300});
 
     requestAnimationFrame(render);
 }
