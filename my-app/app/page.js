@@ -32,9 +32,11 @@ export default function Home() {
               <br />
               benefit here
             </h1>
-            <button className="cursor-pointer ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] text-gray-900 bg-white text-gray-700 px-6 py-2 rounded-full shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow">
-              Try now <ArrowRight className="w-4 h-4" />
-            </button>
+            <Link href="/editor">
+              <button className="cursor-pointer ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] text-gray-900 bg-white text-gray-700 px-6 py-2 rounded-full shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow">
+                Try now <ArrowRight className="w-4 h-4" />
+              </button>
+            </Link>
           </section>
 
           {/* Feature Highlight */}
