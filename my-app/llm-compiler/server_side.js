@@ -1,5 +1,5 @@
 import { GoogleGenAI } from "@google/genai";
-import { readdirSync, readFileSync, statSync} from "fs";
+import { readdirSync, readFile, readFileSync, statSync} from "fs";
 import path from "path";
 
 const ai = new GoogleGenAI({apiKey: process.env.GOOGLE_KEY});
@@ -18,13 +18,23 @@ function promptGroq(prompt) {
 }
 
 
-
 // would be client side here
 function constructCodeToGraphPrompt (dir) {
     // concatenate all files
+    let codePartOfPrompt = "";
+    const files = walkDir(dir);
+    // console.log(files);
 
-    codePartOfPrompt = "";
+    for (const file of files) {
+        codePartOfPrompt += file["filePath"]
+        codePartOfPrompt += file["codeContent"];
+        codePartOfPrompt += "\n";
+    } 
 
+    let full_prompt = readFileSync("./system_prompts/code_to_graph.txt", 'utf-8');
+    full_prompt += codePartOfPrompt;
+
+    return full_prompt;
 }
 
 function walkDir(dir){
@@ -55,8 +65,8 @@ function constructGraphToCodePrompt(nodes) {
 }
 
 function main() {
-    const files = walkDir("./testing_code");
-    console.log(files);
+    const prompt = constructCodeToGraphPrompt("./testing_code");
+    promptGemini(prompt);
 }
 
 main();
