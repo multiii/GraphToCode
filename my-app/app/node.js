@@ -2,4 +2,4 @@ function createNode() {
   return {};
 }
 
-export createNode;
+export default createNode;

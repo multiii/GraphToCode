@@ -1,103 +1,152 @@
-import Image from "next/image";
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              app/page.js
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
+    <div className="flex flex-col min-h-screen bg-gray-100">
+      {/* Header */}
+      <header className="bg-gray-100 container mx-auto px-24 py-6 flex justify-between items-center">
+        <div className="font-bold text-3xl text-gray-900">GraphThing</div>
+        <nav className="flex items-center gap-2">
+          <Link href="#about" className="text-xl font-light text-gray-700 hover:text-gray-900">
+            About
+          </Link>
+          <span className="text-gray-700">•</span>
+          <Link href="#pricing" className="text-xl font-light text-gray-700 hover:text-gray-900">
+            Pricing
+          </Link>
+          <span className="text-gray-700">•</span>
+          <Link href="#page3" className="text-xl font-light text-gray-700 hover:text-gray-900">
+            Page 3
+          </Link>
+        </nav>
+      </header>
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+      {/* Main Content */}
+      <main className="flex-grow">
+        <div className="bg-linear-to-b from-[#e2f2ee] to-gray-100">
+        {/* Hero Section */}
+        <section className="container mx-auto px-24 pt-16 pb-32  text-center">
+          <h1 className="text-6xl mb-12 text-gray-900">
+            Insert purpose and
+            <br />
+            benefit here
+          </h1>
+          <button className="cursor-pointer ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] text-gray-900 bg-white text-gray-700 px-6 py-2 rounded-full shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow">
+            Try now <ArrowRight className="w-4 h-4" />
+          </button>
+        </section>
+
+        {/* Feature Highlight */}
+        <section className="container mx-auto px-24 py-16 grid md:grid-cols-2 gap-8 items-center">
+          <div>
+            <h2 className="text-gray-900 text-4xl">
+              Orchestrate
+              <br />
+              software at scale
+              <br />
+              with our graph
+              <br />
+              based approach
+            </h2>
+          </div>
+          <div className="shadow-lg ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] bg-[#daf1ed] px-16 py-28 rounded-xl text-center text-gray-900 text-xl">Picture of the graph viewer here</div>
+        </section>
         </div>
+
+        {/* Features Grid */}
+        <section className="container w-full px-24 py-16 bg-[#e2f2ee]">
+          <h2 className="text-4xl mb-8 text-gray-900">Focus on large scale with our features</h2>
+
+          <div className="grid md:grid-cols-3 gap-6">
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Graph to Code</h3>
+              <p className="text-gray-700 pt-4">Design the architecture, leave the smaller "solved" problems to AI</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Code to Graph</h3>
+              <p className="text-gray-700 pt-4">Automatically load any project into a graph</p>
+            </div>
+
+            <div className="bg-white p-6 rounded-xl shadow">
+              <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Graph Viewer</h3>
+              <p className="text-gray-700 pt-4">Navigate and understand large codebases faster than before</p>
+            </div>
+          </div>
+        </section>
+
+        {/* Integration Points */}
+        <section className="container mx-auto px-24 py-8">
+          <ul className="space-y-4">
+            <li className="flex items-center gap-3 border-b-4 border-[#c0cdca] pb-4">
+              <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+              <span className="font-medium text-gray-900 text-2xl">Integrate with any IDE</span>
+            </li>
+            <li className="flex items-center gap-3 border-b-4 border-[#c0cdca] pb-4">
+              <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+              <span className="font-medium text-gray-900 text-2xl">Blah blah</span>
+            </li>
+          </ul>
+        </section>
       </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+
+      {/* Footer */}
+      <footer className="bg-[#e6f5f3] py-8 mt-16">
+        <div className="container mx-auto px-24">
+          <div className="font-bold text-4xl mb-6 text-gray-900">GraphThing</div>
+
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div className="space-y-2">
+              <div>
+                <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
+                  Link
+                </Link>
+              </div>
+              <div>
+                <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
+                  Link
+                </Link>
+              </div>
+              <div>
+                <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
+                  Link
+                </Link>
+              </div>
+              <div>
+                <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
+                  Link
+                </Link>
+              </div>
+            </div>
+            <div className="space-y-2">
+              <div>
+                <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
+                  Link
+                </Link>
+              </div>
+              <div>
+                <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
+                  Link
+                </Link>
+              </div>
+              <div>
+                <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
+                  Link
+                </Link>
+              </div>
+              <div>
+                <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
+                  Link
+                </Link>
+              </div>
+            </div>
+          </div>
+
+          <div className="text-xl text-center text-gray-500 text-sm border-t pt-4">(C) 2025 ··· All Rights Reserved</div>
+        </div>
       </footer>
     </div>
-  );
+  )
 }
+
