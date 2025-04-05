@@ -10,5 +10,9 @@ export async function prompt(prompt) {
     console.log(reponse.text);
 }
 
+function constructGraphToCodePrompt(nodes) { 
+     
+}
+
 await prompt("hello there!");
 
