@@ -25,53 +25,57 @@ export default function Home() {
       {/* Main Content */}
       <main className="flex-grow">
         <div className="bg-linear-to-b from-[#e2f2ee] to-gray-100">
-        {/* Hero Section */}
-        <section className="container mx-auto px-24 pt-16 pb-32  text-center">
-          <h1 className="text-6xl mb-12 text-gray-900">
-            Insert purpose and
-            <br />
-            benefit here
-          </h1>
-          <button className="cursor-pointer ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] text-gray-900 bg-white text-gray-700 px-6 py-2 rounded-full shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow">
-            Try now <ArrowRight className="w-4 h-4" />
-          </button>
-        </section>
+          {/* Hero Section */}
+          <section className="container mx-auto px-24 pt-16 pb-32  text-center">
+            <h1 className="text-6xl mb-12 text-gray-900">
+              Insert purpose and
+              <br />
+              benefit here
+            </h1>
+            <button className="cursor-pointer ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] text-gray-900 bg-white text-gray-700 px-6 py-2 rounded-full shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow">
+              Try now <ArrowRight className="w-4 h-4" />
+            </button>
+          </section>
 
-        {/* Feature Highlight */}
-        <section className="container mx-auto px-24 py-16 grid md:grid-cols-2 gap-8 items-center">
-          <div>
-            <h2 className="text-gray-900 text-4xl">
-              Orchestrate
-              <br />
-              software at scale
-              <br />
-              with our graph
-              <br />
-              based approach
-            </h2>
-          </div>
-          <div className="shadow-lg ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] bg-[#daf1ed] px-16 py-28 rounded-xl text-center text-gray-900 text-xl">Picture of the graph viewer here</div>
-        </section>
+          {/* Feature Highlight */}
+          <section className="container mx-auto px-24 py-16 grid md:grid-cols-2 gap-8 items-center">
+            <div>
+              <h2 className="text-gray-900 text-4xl">
+                Orchestrate
+                <br />
+                software at scale
+                <br />
+                with our graph
+                <br />
+                based approach
+              </h2>
+            </div>
+            <div className="shadow-lg ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] bg-[#daf1ed] px-16 py-28 rounded-xl text-center text-gray-900 text-xl">
+              Picture of the graph viewer here
+            </div>
+          </section>
         </div>
 
-        {/* Features Grid */}
-        <section className="container w-full px-24 py-16 bg-[#e2f2ee]">
-          <h2 className="text-4xl mb-8 text-gray-900">Focus on large scale with our features</h2>
+        {/* Features Grid - Fixed to extend full width */}
+        <section className="w-full bg-[#e2f2ee] py-16">
+          <div className="container mx-auto px-24">
+            <h2 className="text-4xl mb-8 text-gray-900">Focus on large scale with our features</h2>
 
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Graph to Code</h3>
-              <p className="text-gray-700 pt-4">Design the architecture, leave the smaller "solved" problems to AI</p>
-            </div>
+            <div className="grid md:grid-cols-3 gap-6">
+              <div className="bg-white p-6 rounded-xl shadow">
+                <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Graph to Code</h3>
+                <p className="text-gray-700 pt-4">Design the architecture, leave the smaller "solved" problems to AI</p>
+              </div>
 
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Code to Graph</h3>
-              <p className="text-gray-700 pt-4">Automatically load any project into a graph</p>
-            </div>
+              <div className="bg-white p-6 rounded-xl shadow">
+                <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Code to Graph</h3>
+                <p className="text-gray-700 pt-4">Automatically load any project into a graph</p>
+              </div>
 
-            <div className="bg-white p-6 rounded-xl shadow">
-              <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Graph Viewer</h3>
-              <p className="text-gray-700 pt-4">Navigate and understand large codebases faster than before</p>
+              <div className="bg-white p-6 rounded-xl shadow">
+                <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Graph Viewer</h3>
+                <p className="text-gray-700 pt-4">Navigate and understand large codebases faster than before</p>
+              </div>
             </div>
           </div>
         </section>
@@ -143,7 +147,9 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="text-xl text-center text-gray-500 text-sm border-t pt-4">(C) 2025 ··· All Rights Reserved</div>
+          <div className="text-xl text-center text-gray-500 text-sm border-t pt-4">
+            (C) 2025 ··· All Rights Reserved
+          </div>
         </div>
       </footer>
     </div>
