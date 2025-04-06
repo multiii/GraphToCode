@@ -2,7 +2,7 @@ import { useEffect, useRef } from 'react';
 
 export const nodes = [];
 
-export default function Editor() {
+export default function Editor({ state }) {
     const canvasRef = useRef(null);
 
     useEffect(() => {

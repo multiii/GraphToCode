@@ -1,7 +1,7 @@
 "use client";
 
 import Canvas, { nodes } from "./canvas"
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 const FileExplorerIDE = () => {
   const [key, setKey] = useState(0);
@@ -17,6 +17,11 @@ const FileExplorerIDE = () => {
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileInputRef] = useState(React.createRef());
+  const hasRun = useRef(false);
+  const state = {
+    mode: "mouse",
+    view: "file"
+  };
 
   const toggleFileMenu = () => {
     setFileMenuOpen(!fileMenuOpen);
@@ -215,6 +220,9 @@ const FileExplorerIDE = () => {
   };
 
   useEffect(() => {
+    if (hasRun.current) return;
+    hasRun.current = true;
+
     const handleKeyDown = (event) => {
       if (event.key === 'Delete') {
         deleteFile();
@@ -306,13 +314,13 @@ const FileExplorerIDE = () => {
           </button>
           {drawMenuOpen && (
             <div className="absolute top-full left-0 bg-white shadow-md border z-10 w-48">
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
-                Cursor
+              <button onClick={() => {state.mode = "mouse"}} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+                Mouse
               </button>
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+              <button onClick={() => {state.mode = "add"}} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
                 Add Node
               </button>
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+              <button onClick={() => {state.mode = "connect"}} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
                 Add Connector
               </button>
             </div>
@@ -347,7 +355,7 @@ const FileExplorerIDE = () => {
               <p>Currently selected: {selectedFile}</p> : 
               <p>Select a file to begin editing</p>
             } */}
-          <Canvas/>
+          <Canvas state={state}/>
         </div>
       </div>
     </div>

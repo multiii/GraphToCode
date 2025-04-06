@@ -5,7 +5,8 @@ export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-[#e2f2ee]">
       {/* Header */}
-      <header className="bg-gray-100 container mx-auto px-24 py-6 flex justify-between items-center">
+      <div className="px-80">
+      <header className="bg-gray-100 container mx-auto px-6 py-4 my-6 rounded-full flex justify-center-safe gap-128 items-center">
         <div className="font-bold text-3xl text-gray-900">GraphThing</div>
         <nav className="flex items-center gap-2">
           <Link href="#about" className="text-xl font-light text-gray-700 hover:text-gray-900">
@@ -21,6 +22,7 @@ export default function Home() {
           </Link>
         </nav>
       </header>
+      </div>
 
       {/* Main Content */}
       <main className="flex-grow">
