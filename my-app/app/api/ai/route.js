@@ -4,6 +4,7 @@ import path from "path";
 
 const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_KEY });
 
+
 export async function GET (req) {
     console.log("GET REQUEST");
     const { searchParams } = new URL(req.url);
