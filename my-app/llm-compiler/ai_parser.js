@@ -66,7 +66,7 @@ async function walkDir(dir){
 }
 
 function constructGraphToCodePrompt(nodes) { 
-
+    
 }
 
 function fillEmptyNodeFields(nodes) {

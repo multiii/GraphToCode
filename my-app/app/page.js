@@ -7,7 +7,7 @@ export default function Home() {
       {/* Header */}
       <div className="px-80">
       <header className="bg-gray-100 container mx-auto px-6 py-4 my-6 rounded-full flex justify-center-safe gap-128 items-center">
-        <div className="font-bold text-3xl text-gray-900">GraphThing</div>
+        <div className="font-bold text-3xl text-gray-900">CodeItNodeIt!</div>
         <nav className="flex items-center gap-2">
           <Link href="#about" className="text-xl font-light text-gray-700 hover:text-gray-900">
             About
@@ -104,7 +104,7 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-[#e6f5f3] py-8 mt-16">
         <div className="container mx-auto px-24">
-          <div className="font-bold text-4xl mb-6 text-gray-900">GraphThing</div>
+          <div className="font-bold text-4xl mb-6 text-gray-900">CodeItNodeIt!</div>
 
           <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="space-y-2">

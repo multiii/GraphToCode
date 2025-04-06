@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import {addNodes} from '../../llm-compiler/compiler_poc';
+import {addNodes} from '../../llm-compiler/ai_parser';
 
 export const nodes = [];
 
@@ -324,8 +324,8 @@ useEffect(() => {
     
         let dx = e.clientX - lastX;
         let dy = e.clientY - lastY;
-        dx *= 1.5;
-        dy *= 1.5;
+        dx *= 1/View.scale;
+        dy *= 1/View.scale;
     
         if(View.activeNode == null){
             View.x += dx;
