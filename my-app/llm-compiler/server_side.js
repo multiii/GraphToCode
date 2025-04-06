@@ -1,6 +1,7 @@
 import { GoogleGenAI } from "@google/genai";
 import { readdirSync, readFile, readFileSync, statSync} from "fs";
 import path from "path";
+import { json } from "stream/consumers";
 
 const ai = new GoogleGenAI({apiKey: process.env.GOOGLE_KEY});
 
@@ -10,8 +11,10 @@ export async function promptGemini(prompt) {
         contents: prompt,
     });
 
-    console.log(response.text);
+    // console.log(response.text.toString());
+    return response.text.toString();
 }
+
 
 function promptGroq(prompt) {
 
@@ -36,6 +39,17 @@ function constructCodeToGraphPrompt (dir) {
 
     return full_prompt;
 }
+
+function getNodes(jsonString) {
+    console.log(typeof(jsonString));
+    // remove gemini artifacts
+    jsonString = jsonString.replace(/```json/g, '');
+    jsonString = jsonString.replace(/```/g, '');
+
+    const nodes = JSON.parse(jsonString)["nodes"];
+    return nodes;
+}
+
 
 function walkDir(dir){
     const filesArray = [];
@@ -64,12 +78,14 @@ function constructGraphToCodePrompt(nodes) {
 
 }
 
-function main() {
-    const prompt = constructCodeToGraphPrompt("./testing_code");
-    promptGemini(prompt);
+export async function codeToNodes(dir) {
+    const prompt = constructCodeToGraphPrompt(dir);
+    const jsonString = await promptGemini(prompt);
+
+    const nodes = getNodes(jsonString);
+    return nodes;
 }
 
-main();
 
 
 

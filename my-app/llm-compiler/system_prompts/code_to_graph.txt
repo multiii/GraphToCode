@@ -9,6 +9,7 @@ These would be functions, classes, structs, globals, etc...
 Here is a high level example of the resulting JSON.
 Ik you can't comment in JSON but for the sake of the example the # are comments for your help.
 But don't try to include comments in the actual output.
+
 nodes: [
     {
         "nodeType", # ex. void, int, class, struct, global, etc...
@@ -25,6 +26,7 @@ nodes: [
 ]
 
 So it will be an array of these structures. Where [] represents the array of nodes and the first {} just represents an example of what one entry could look like.
+IMPORTANT: Output this as raw text that could be json. There should be no prefix / suffix annotations.
 
 
 Below is all the code you have to convert. Remember you have to convert all of it and consistently.
