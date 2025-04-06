@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
 import {addNodes} from '../../llm-compiler/ai_parser';
 
-export const nodes = [];
+// can't be constant because it needs to be able to be cleared
+export let nodes = [];
 
-export async function makeFullGraph() {
+export async function makeFullGraph(dirHandle) {
     nodes = [];
-    addNodes(nodes);
+    addNodes(nodes, dirHandle);
 }
 
 export default function Editor({ state }) {
@@ -518,6 +519,7 @@ useEffect(() => {
     // nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
     
     function render(){
+        console.log(nodes);
         ctx.fillStyle = RenderProperties.colors.primary;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
