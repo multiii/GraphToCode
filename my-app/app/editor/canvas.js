@@ -360,8 +360,8 @@ export default function Editor({ state }) {
         
     });
     document.addEventListener("mousemove", (e) => {
-        console.log(View.x);
-        console.log(View.y);
+        // console.log(View.x);
+        // console.log(View.y);
         View.mouseX = transformCursor(e).x;
         View.mouseY = transformCursor(e).y;
 

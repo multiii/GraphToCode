@@ -1,6 +1,6 @@
 "use client";
 
-import Canvas, {makeFullGraph, nodes, View } from "./canvas";
+import Canvas, {makeFullGraph, nodes, View} from "./canvas";
 import React, { useState, useEffect, useRef } from 'react';
 
 import {BFScompilation} from "./algorithm";
@@ -25,6 +25,7 @@ const FileExplorerIDE = () => {
 
   const [showLinkInput, setShowLinkInput] = useState(false);
   const [githubLink, setGithubLink] = useState('');
+  const [basePath, setBasePath] = useState('');
 
   const [headerCN, setHeaderCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
   const [fileCN, setFileCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]");
@@ -32,6 +33,7 @@ const FileExplorerIDE = () => {
   const [mouseCN, setMouseCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]");
   const [addCN, setAddCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
   const [connectCN, setConnectCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
+  
 
   const onHeaderClick = () => {
     console.log(0, state.view)
@@ -85,6 +87,16 @@ const FileExplorerIDE = () => {
     }
   }
 
+  const onOpenClick = () => {
+    // open in vscode
+    function joinPaths(basePath, relativePath) {
+      return basePath.replace(/[\\/]+$/, '') + '/' + relativePath.replace(/^[\\/]+/, '');
+    }
+
+    const fullPath = joinPaths(basePath, View.activeNode.filePath);
+    window.location.href = "vscode://file/" + encodeURIComponent(fullPath) + ":" + View.activeNode.lineNumber;
+  }
+
   const toggleFileMenu = () => {
     setFileMenuOpen(!fileMenuOpen);
     if (compileMenuOpen) setCompileMenuOpen(false);
@@ -97,6 +109,8 @@ const FileExplorerIDE = () => {
 
   const openFileExplorer = async () => {
     const dirHandle = await window.showDirectoryPicker();
+    const basePath = prompt("Enter full base path of the selected folder (for VSCODE integration) or just press enter if you don't care :O");
+    setBasePath(basePath);
 
     const folder = await readDirectory(dirHandle);
 
@@ -370,6 +384,8 @@ const FileExplorerIDE = () => {
             </button>
             <button className={connectCN}  onClick={onConnectClick} style={{backgroundImage: "url(/curve.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
             </button>
+            <button className={connectCN}  onClick={onOpenClick} style={{backgroundImage: "url(/vscode.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
+            </button> 
           </div>
         </div>
       </div>
