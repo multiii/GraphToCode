@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link"
 import Canvas, {makeFullGraph, nodes, View} from "./canvas";
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -329,6 +330,13 @@ const FileExplorerIDE = () => {
     <div key={key} className="flex flex-col h-screen bg-gray-50 text-gray-900">
       {/* Top Menu Bar */}
       <div className="flex border-b py-2">
+      <div className="relative">
+          <button 
+            className="px-4 py-2 hover:bg-gray-200 text-gray-900" 
+          >
+            <Link href="/">Home</Link>
+          </button>
+        </div>
         <div className="relative">
           <button 
             className="px-4 py-2 hover:bg-gray-200 text-gray-900" 

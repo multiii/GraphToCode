@@ -106,6 +106,8 @@ export async function codeToNodes() {
     const prompt = await constructCodeToGraphPrompt(dirHandle);
     const jsonString = await promptGemini(prompt);
 
+    console.log(123, jsonString)
+
     const nodes = getNodes(jsonString);
     fillEmptyNodeFields(nodes);
     return nodes;
@@ -119,7 +121,7 @@ export async function addNodes(nodes_array, dirHandle) {
     console.log(prompt);
     const jsonString = await promptGemini(prompt);
     console.log("\n\n\n");
-    console.log(jsonString);
+    console.log(330, jsonString);
 
     const nodes = getNodes(jsonString);
     console.log(nodes);

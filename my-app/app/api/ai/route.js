@@ -2,7 +2,7 @@ import { GoogleGenAI } from "@google/genai";
 import { readFileSync, existsSync} from 'fs';
 import path from "path";
 
-const ai = new GoogleGenAI({apiKey: process.env.GOOGLE_KEY});
+const ai = new GoogleGenAI({ apiKey: process.env.GOOGLE_KEY });
 
 export async function GET (req) {
     console.log("GET REQUEST");
@@ -15,6 +15,8 @@ export async function GET (req) {
 
     let filePath = path.join(process.cwd(), 'system_prompts', 'code_to_graph.txt');
     let system_prompt = readFileSync(filePath, 'utf-8');
+
+    console.log(1234, system_prompt)
 
     // console.log(system_prompt);
 
