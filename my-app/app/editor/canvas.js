@@ -1,4 +1,8 @@
 import { useEffect, useRef } from 'react';
+<<<<<<< HEAD
+=======
+import {addNodes} from '../../llm-compiler/compiler_poc';
+>>>>>>> 23e9833 (canvas testing is broke :()
 
 export const nodes = [];
 
@@ -71,7 +75,7 @@ useEffect(() => {
     }
     
     function renderNode(node){
-    
+        // console.log(node);
         renderConnections(node);
 
         ctx.font = "18px lexend";
