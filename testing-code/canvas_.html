@@ -17,7 +17,14 @@ const View = {
     y: 0,
     scale: 1,
     activeNode: null,
-    activeNodeFeature: null
+    activeNodeFeature: null,
+    activeFeatureTextPosition: 0
+}
+
+function clamp(x, a, b){
+    if(x < a) return a;
+    if(x > b) return b;
+    return x;
 }
 
 const RenderProperties = {
@@ -133,15 +140,26 @@ function renderNode(node){
 
     ctx.font = "18px lexend";
     for(let i = 0; i < node.inputs.length+1; i++){
+        ctx.strokeStyle = "black";
+        
+        let editOn = (i < node.inputs.length && View.activeNodeFeature == node.inputs[i]);
+
+        if(editOn){
+            ctx.strokeStyle = "blue"; 
+        }
         ctx.fillStyle = "white";
         ctx.beginPath();
         ctx.roundRect(node.x+4, node.y+inputTop-10, node.width-8, 25, 5);
         ctx.fill();
         ctx.stroke();
         ctx.fillStyle = "black";
-        if(View.activeNodeFeature == node.inputs[i]){
-            ctx.fillStyle = "red";
+
+        if(editOn && Math.sin(Date.now()/200) > 0){
+            ctx.fillStyle = "black";  
+            ctx.fillRect(node.x + 8 + ctx.measureText(node.inputs[i].text.substring(0, View.activeFeatureTextPosition)).width,
+             node.y+inputTop-5, 2, 18);
         }
+        
         if(i == node.inputs.length){
             ctx.fillStyle = "gray";
             ctx.fillText("Add input...", node.x+8, node.y+inputTop+10);
@@ -151,6 +169,7 @@ function renderNode(node){
         inputTop += 29;
     }
     
+    ctx.strokeStyle = "black";
     ctx.font = "15px lexend";
     ctx.fillStyle = "black";
     ctx.fillText("DESCRIPTION", node.x+4, node.y+inputTop+5);
@@ -236,6 +255,36 @@ document.addEventListener("mousemove", (e) => {
 });
 
 
+document.addEventListener("keydown", (e) => {
+    if(e.key == "Backspace"){
+        if(View.activeNodeFeature != null){
+            if(View.activeNodeFeature.text == ""){
+                //stupid logic 
+                for(let i = 0; i < View.activeNode.inputs.length; i++){
+                    if(View.activeNodeFeature == View.activeNode.inputs[i]){
+                        View.activeNode.inputs.splice(i, 1);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    if(e.key == "ArrowRight"){
+        if(View.activeNodeFeature != null){
+            View.activeFeatureTextPosition = clamp(View.activeFeatureTextPosition+1, 0, View.activeNodeFeature.text.length);
+        }
+    }
+    if(e.key == "ArrowLeft"){
+        View.activeFeatureTextPosition = clamp(View.activeFeatureTextPosition-1, 0, 100000000000);
+    }
+    if(e.key.length == 1){
+        if(View.activeNodeFeature != null){
+            View.activeNodeFeature.text = View.activeNodeFeature.text.substring(0, View.activeFeatureTextPosition) + e.key + View.activeNodeFeature.text.substring(View.activeFeatureTextPosition);
+            View.activeFeatureTextPosition++;
+        }
+    }
+});
+
 canvas.addEventListener('wheel', (e) => {
     e.preventDefault(); 
     let zoomSpeed = 0.001; 
@@ -277,16 +326,21 @@ function resolveClick(e){
     y = (y - View.y)/View.scale;
 
     View.activeNode = null;
+    View.activeNodeFeature = null;
     for(let i in nodes){
         if(isPointInNode(x,y, nodes[i])){
             View.activeNode = nodes[i];
 
             let node = nodes[i];
             //68 = top of inputs
-            for(let i = 0;  i < nodes[i].inputs.length; i++){
-                if(isPointInNode(x, y, {x: node.x, y: node.y+68+29*i, width: node.width, height: 29})){
-                    View.activeNodeFeature = nodes[i].input;
-                    
+            for(let j = 0; j < nodes[i].inputs.length+1; j++){
+                if(isPointInNode(x, y, {x: node.x, y: node.y+60+29*j, width: node.width, height: 29})){
+                    if(j == node.inputs.length){
+                        node.inputs.push({text: ""});
+                        
+                    }
+                    View.activeNodeFeature = node.inputs[j];
+                    //alert("a");
                 }
             }
 
@@ -300,7 +354,8 @@ function resolveClick(e){
 nodes.push(createNode());
 nodes.push(createNode());
 nodes.push(createNode());
-nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
+nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; 
+nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
 nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
 nodes[0].naturalLanguageDescription = "main function that calls some functions";
 
