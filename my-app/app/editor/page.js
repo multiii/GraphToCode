@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link"
 import Canvas, {makeFullGraph, nodes, View} from "./canvas";
 import React, { useState, useEffect, useRef } from 'react';
 
@@ -36,7 +37,7 @@ const FileExplorerIDE = () => {
   
 
   const onHeaderClick = () => {
-    console.log(0, state.view)
+
     if (state.view == "file") {
       setState({mode: state.mode, view: "header"})
       console.log(0, state.view)
@@ -150,15 +151,19 @@ const FileExplorerIDE = () => {
   }
 
   const createFile = () => {
-    let indices = selectedFile.split("\n")[0].split(",");
-    indices.pop();
     let folder = folderStructure;
 
-    for (let i = 0; i < indices.length; i++) {
-      folder = folder.children[indices[i]];
+    if (selectedFile != null) {
+      let indices = selectedFile.split("\n")[0].split(",");
+      indices.pop();
+      
+      for (let i = 0; i < indices.length; i++) {
+        folder = folder.children[indices[i]];
+      }
     }
 
     folder.children[folder.children.length] = {name: "Untitled.hpp", type: "file"};
+
     setFolderStructure(folderStructure);
     setKey(key + 1);
   }
@@ -325,6 +330,13 @@ const FileExplorerIDE = () => {
     <div key={key} className="flex flex-col h-screen bg-gray-50 text-gray-900">
       {/* Top Menu Bar */}
       <div className="flex border-b py-2">
+      <div className="relative">
+          <button 
+            className="px-4 py-2 hover:bg-gray-200 text-gray-900" 
+          >
+            <Link href="/">Home</Link>
+          </button>
+        </div>
         <div className="relative">
           <button 
             className="px-4 py-2 hover:bg-gray-200 text-gray-900" 
