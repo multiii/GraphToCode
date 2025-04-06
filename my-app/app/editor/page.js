@@ -23,6 +23,9 @@ const FileExplorerIDE = () => {
     view: "file"
   });
 
+  const [showLinkInput, setShowLinkInput] = useState(false);
+  const [githubLink, setGithubLink] = useState('');
+
   const [headerCN, setHeaderCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
   const [fileCN, setFileCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]");
 
@@ -285,6 +288,11 @@ const FileExplorerIDE = () => {
     }
   };
 
+  const openLinkField = () => {
+    setShowLinkInput(true);
+    setFileMenuOpen(false);
+  }
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Delete') {
@@ -319,12 +327,12 @@ const FileExplorerIDE = () => {
                 Open Folder
               </button>
               
-              {/* <button 
+              <button 
                 className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900"
                 onClick={openLinkField}
               >
                 Open Github Link
-              </button> */}
+              </button>
             </div>
           )}
         </div>
@@ -366,6 +374,41 @@ const FileExplorerIDE = () => {
         </div>
       </div>
 
+      {/* GitHub Link Input Field */}
+      {showLinkInput && (
+        <div className="p-4 bg-blue-50 border-b border-blue-200 flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Paste GitHub URL here..."
+            className="flex-1 px-3 py-2 border rounded"
+            value={githubLink}
+            onChange={(e) => setGithubLink(e.target.value)}
+          />
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            onClick={async () => {
+              if (!githubLink.startsWith("http")) {
+                alert("Please enter a valid URL.");
+                return;
+              }
+
+              setShowLinkInput(false);
+              console.log("Handling GitHub link:", githubLink);
+
+              // Your logic to use the link goes here
+            }}
+          >
+            Open Link
+          </button>
+          <button
+            className="text-gray-600 hover:text-black"
+            onClick={() => setShowLinkInput(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
+
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
         {/* Sidebar */}
@@ -397,6 +440,7 @@ const FileExplorerIDE = () => {
         </div>
       </div>
     </div>
+
   );
 };
 
