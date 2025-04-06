@@ -258,6 +258,10 @@ document.addEventListener("mousemove", (e) => {
 document.addEventListener("keydown", (e) => {
     if(e.key == "Backspace"){
         if(View.activeNodeFeature != null){
+
+            View.activeNodeFeature.text = View.activeNodeFeature.text.substring(0, View.activeFeatureTextPosition-1) + View.activeNodeFeature.text.substring(View.activeFeatureTextPosition);
+            View.activeFeatureTextPosition--;
+
             if(View.activeNodeFeature.text == ""){
                 //stupid logic 
                 for(let i = 0; i < View.activeNode.inputs.length; i++){
@@ -328,7 +332,7 @@ function resolveClick(e){
     View.activeNode = null;
     View.activeNodeFeature = null;
     for(let i in nodes){
-        if(isPointInNode(x,y, nodes[i])){
+        if(isPointInNode(x, y, nodes[i])){
             View.activeNode = nodes[i];
 
             let node = nodes[i];
@@ -339,6 +343,7 @@ function resolveClick(e){
                         node.inputs.push({text: ""});
                         
                     }
+                    View.activeFeatureTextPosition = node.inputs[j].text.length;
                     View.activeNodeFeature = node.inputs[j];
                     //alert("a");
                 }
