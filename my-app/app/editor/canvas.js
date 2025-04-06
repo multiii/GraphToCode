@@ -6,6 +6,7 @@ export const nodes = [];
 export default function Editor({ state }) {
     const canvasRef = useRef(null);
 
+    
 useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
@@ -293,11 +294,25 @@ useEffect(() => {
         y = (y - View.y)/View.scale;
         return {x, y};
     }
+
+    function addNodeFromClick(e){
+        let x = transformCursor(e).x;
+        let y = transformCursor(e).y;
+        let node = createNode();
+        node.x = x;
+        node.y = y;
+        nodes.push(node);
+    }
     
     canvas.addEventListener("mousedown", (e) => {
         isDragging = true;
         lastX = e.clientX;
         lastY = e.clientY;
+
+        if(state.mode == "add"){
+            addNodeFromClick(e);
+            return;
+        }
 
         if(View.activeConnectionHandle){
             let node = findConnectionNode(transformCursor(e).x, transformCursor(e).y, "right");
@@ -357,7 +372,17 @@ useEffect(() => {
                         }
                     }
                 }
+                return;
             }
+            
+        }
+        //delete node
+        if(e.key == "x" && View.activeNode != null && View.activeNodeFeature == null){
+            for(let i  = 0; i < nodes.length; i++){
+                if(nodes[i] == View.activeNode)
+                    return nodes.splice(i, 1);
+            }
+            return;
         }
         if(e.key == "ArrowRight"){
             if(View.activeNodeFeature != null){
@@ -481,10 +506,6 @@ useEffect(() => {
    
     addNodes(nodes);   
 
-    
-    // nodes.push(createNode());
-    // nodes.push(createNode());
-    // nodes.push(createNode());
     // nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
     // //nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
     // nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
@@ -514,7 +535,7 @@ useEffect(() => {
     
     render();
 
-}, []);
+}, [state]);
 
     return (
         <canvas ref={canvasRef} style={{ width: '100%', height: '100%'}}></canvas>

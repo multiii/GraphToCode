@@ -6,7 +6,7 @@ export default function Home() {
     <div className="flex flex-col min-h-screen bg-[#DDF3EE]">
       {/* Header */}
       <div className="px-80">
-      <header className="bg-gray-100 container mx-auto px-6 py-4 my-6 rounded-full flex justify-center-safe gap-128 items-center">
+      <header className="bg-gray-100 container mx-auto px-6 py-4 my-6 rounded-full flex justify-center-safe gap-128 items-center shadow-3xl shadow-[#c1e6dd] shadow-lg">
         <div className="font-bold text-3xl text-gray-900">CodeItNodeIt</div>
         <nav className="flex items-center gap-2">
           <Link href="#about" className="text-xl font-light text-gray-700 hover:text-gray-900">
@@ -42,7 +42,7 @@ export default function Home() {
           </section>
 
           {/* Feature Highlight */}
-          <section className="container mx-auto px-24 py-16 grid md:grid-cols-2 gap-8 items-center">
+          <section className="container mx-auto px-24 py-32 grid md:grid-cols-2 gap-8 items-center">
             <div>
               <h2 className="text-gray-900 text-4xl">
                 Orchestrate
@@ -61,7 +61,7 @@ export default function Home() {
         </div>
 
         {/* Features Grid - Fixed to extend full width */}
-        <section className="w-full bg-[#ddf3ee] py-16">
+        <section className="w-full bg-[#ddf3ee] py-32">
           <div className="container mx-auto px-24">
             <h2 className="text-4xl mb-8 text-gray-900">Focus on large scale with our features</h2>
 
@@ -78,27 +78,33 @@ export default function Home() {
 
               <div className="bg-white p-6 rounded-xl shadow">
                 <h3 className="font-bold text-xl mb-4 text-gray-900 border-b-4 border-[#c0cdca] pb-2">Graph Viewer</h3>
-                <p className="text-gray-700 pt-4">Navigate and understand large codebases faster than before</p>
+                <p className="text-gray-700 pt-4">Navigate and understand large codebases faster than ever before with our unique graph viewer</p>
               </div>
             </div>
           </div>
         </section>
 
         {/* Integration Points */}
-        <section className="w-full py-8 bg-gray-100">
-          <div className="container mx-full px-24">
-          <ul className="space-y-4">
-            <li className="flex items-center gap-3 border-b-4 border-[#c0cdca] pb-4">
-              <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-              <span className="font-medium text-gray-900 text-2xl">Integrate with any IDE</span>
-            </li>
-            <li className="flex items-center gap-3 border-b-4 border-[#c0cdca] pb-4">
-              <div className="w-3 h-3 rounded-full bg-gray-300"></div>
-              <span className="font-medium text-gray-900 text-2xl">Blah blah</span>
-            </li>
-          </ul>
+        <section className="w-full py-16 bg-white">
+          <div className="container mx-auto px-16">
+            <ul className="space-y-4">
+              <li className="flex items-center gap-3 border-b-4 border-[#c0cdca] pb-4">
+                <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+                <span className="font-medium text-gray-900 text-2xl">Unlike competitors, boost productivity at large scale</span>
+              </li>
+              <li className="flex items-center gap-3 border-b-4 border-[#c0cdca] pb-4">
+                <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+                <span className="font-medium text-gray-900 text-2xl">Load any existing repositories</span>
+              </li>
+              <li className="flex items-center gap-3 border-b-4 border-[#c0cdca] pb-4">
+                <div className="w-3 h-3 rounded-full bg-gray-300"></div>
+                <span className="font-medium text-gray-900 text-2xl">Integrate with any IDE</span>
+              </li>
+            </ul>
           </div>
         </section>
+
+
       </main>
 
       {/* Footer */}
