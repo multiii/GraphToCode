@@ -4,6 +4,8 @@ Be very consistent when producing nodes. Do not write anything else.
 
 The nodes should represent meaningful "chunks" in code which you will determine. Small individual statements wouldn't count. 
 These would be functions, classes, structs, globals, etc...
+Also try to not have many nodes that aren't connected. That means most nodes should be dependencies or have dependencies.
+Don't make too many nodes in general. There shouldn't be more than 10 ideally.
 
 
 Here is a high level example of the resulting JSON.

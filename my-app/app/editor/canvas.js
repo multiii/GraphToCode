@@ -46,7 +46,7 @@ export default function Editor({ state }) {
         area: canvas.width * canvas.height,
         gravity: 10,
         speed: 1.00,
-        margin: 25,
+        margin: 15,
     };
 
     settings.repulsiveForce = 10;
@@ -617,7 +617,7 @@ export default function Editor({ state }) {
 
             return t >= 0 && t <= 1 && u >= 0 && u <= 1;
         }
-
+        
         nodes.forEach(source => {
             const start = getCenter(source);
 
@@ -628,12 +628,38 @@ export default function Editor({ state }) {
                     if (other === source || other === target) return;
 
                     if (lineIntersectsNode(start.x, start.y, end.x, end.y, other)) {
-                        other.x += 10;
-                        other.y += 10;
+                        const nodeCenter = getCenter(other);
+                        const closest = closestPointOnLine(start, end, nodeCenter);
+
+                        let dx = nodeCenter.x - closest.x;
+                        let dy = nodeCenter.y - closest.y;
+                        let distance = Math.sqrt(dx * dx + dy * dy) + 0.01;
+
+                        let pushStrength = 15; 
+                        other.x += (dx / distance) * pushStrength;
+                        other.y += (dy / distance) * pushStrength;
                     }
                 });
             });
         });
+
+        function closestPointOnLine(a, b, p) {
+            const ax = a.x, ay = a.y;
+            const bx = b.x, by = b.y;
+            const px = p.x, py = p.y;
+
+            const abx = bx - ax;
+            const aby = by - ay;
+            const abLengthSquared = abx * abx + aby * aby;
+
+            let t = ((px - ax) * abx + (py - ay) * aby) / abLengthSquared;
+            t = Math.max(0, Math.min(1, t));
+
+            return {
+                x: ax + t * abx,
+                y: ay + t * aby
+            };
+        }
     }
 
 
