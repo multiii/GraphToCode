@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import {BFS} from "./algorithm"
 import {addNodes} from '../../llm-compiler/ai_parser';
 
 // can't be constant because it needs to be able to be cleared
@@ -385,6 +386,9 @@ export default function Editor({ state }) {
     
     
     document.addEventListener("keydown", (e) => {
+        if(e.key == "b"){
+            BFS(nodes[0]);
+        }
         if(e.key == "Backspace"){
             if(View.activeNodeFeature != null){
     
@@ -590,10 +594,10 @@ export default function Editor({ state }) {
             const bottom = node.y + node.height + settings.margin;
 
             return (
-                lineIntersectsLine(x1, y1, x2, y2, left, top, right, top) || // top
-                lineIntersectsLine(x1, y1, x2, y2, right, top, right, bottom) || // right
-                lineIntersectsLine(x1, y1, x2, y2, right, bottom, left, bottom) || // bottom
-                lineIntersectsLine(x1, y1, x2, y2, left, bottom, left, top) // left
+                lineIntersectsLine(x1, y1, x2, y2, left, top, right, top) || 
+                lineIntersectsLine(x1, y1, x2, y2, right, top, right, bottom) || 
+                lineIntersectsLine(x1, y1, x2, y2, right, bottom, left, bottom) || 
+                lineIntersectsLine(x1, y1, x2, y2, left, bottom, left, top) 
             );
         }
 
@@ -617,7 +621,6 @@ export default function Editor({ state }) {
                     if (other === source || other === target) return;
 
                     if (lineIntersectsNode(start.x, start.y, end.x, end.y, other)) {
-                        // Nudge the node away (e.g., simple push right/down)
                         other.x += 10;
                         other.y += 10;
                     }
