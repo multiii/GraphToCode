@@ -1,9 +1,10 @@
 "use client";
 
 import Canvas, { nodes } from "./canvas"
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const FileExplorerIDE = () => {
+  const [key, setKey] = useState(0);
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
   const [compileMenuOpen, setCompileMenuOpen] = useState(false);
   const [viewMenuOpen, setViewMenuOpen] = useState(false);
@@ -54,7 +55,32 @@ const FileExplorerIDE = () => {
   };
 
   const createFile = () => {
-    console.log(selectedFile.split("\n")[0]);
+    let indices = selectedFile.split("\n")[0].split(",");
+    indices.pop();
+    let folder = folderStructure;
+
+    for (let i = 0; i < indices.length; i++) {
+      folder = folder.children[indices[i]];
+    }
+
+    folder.children[folder.children.length] = {name: "test.pdf", type: "file"};
+    setFolderStructure(folderStructure);
+    setKey(key + 1);
+  }
+
+  const deleteFile = () => {
+    let indices = selectedFile.split("\n")[0].split(",");
+    let folder = folderStructure;
+
+    for (let i = 0; i < indices.length - 1; i++) {
+      folder = folder.children[indices[i]];
+    }
+
+    console.log(folder)
+    delete folder.children[indices[indices.length - 1]];
+    console.log(folder)
+    setFolderStructure(folderStructure);
+    setKey(key + 1);
   }
 
   const handleFileSelection = (event) => {
@@ -188,8 +214,22 @@ const FileExplorerIDE = () => {
     }
   };
 
+  useEffect(() => {
+    const handleKeyDown = (event) => {
+      if (event.key === 'Delete') {
+        deleteFile();
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [selectedFile]);
+
   return (
-    <div className="flex flex-col h-screen bg-gray-50 text-gray-900">
+    <div key={key} className="flex flex-col h-screen bg-gray-50 text-gray-900">
       {/* Hidden file input */}
       <input
         type="file"
