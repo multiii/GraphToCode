@@ -76,11 +76,11 @@ function fillEmptyNodeFields(nodes) {
         node.width = 250;
         node.height = 0;
 
-        // let dict_style = [];
-        // for (const input of node.inputs) {
-        //     dict_style.push({text: input});
-        // }
-        // node.inputs = dict_style;
+        let dict_style = [];
+        for (const input of node.inputs) {
+            dict_style.push({text: input});
+        }
+        node.inputs = dict_style;
 
         
         let depends = []; 
@@ -89,10 +89,10 @@ function fillEmptyNodeFields(nodes) {
         }
         node.dependencies = depends;
         
-        
-        // node.nodeType = {text: node.nodeType};
-        // node.nodeName = {text: node.nodeName};
-        // node.naturalLanguageDescription = {text: node.naturalLanguageDescription};
+        node.nodeType = {text: node.nodeType};
+        node.nodeName = {text: node.nodeName};
+        node.naturalLanguageDescription = {text: node.naturalLanguageDescription};
+        node.nodeNamespace = {text: node.nodeNamespace};
 
         node.typeWidth = 0;
         node.nameWidth = 0;

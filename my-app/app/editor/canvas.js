@@ -478,21 +478,22 @@ useEffect(() => {
         }
     }
 
+   
+    addNodes(nodes);   
+
     
-    
-    nodes.push(createNode());
-    nodes.push(createNode());
-    nodes.push(createNode());
-    nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
-    //nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
-    nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
-    nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
+    // nodes.push(createNode());
+    // nodes.push(createNode());
+    // nodes.push(createNode());
+    // nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
+    // //nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
+    // nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
+    // nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
     
     function render(){
         ctx.fillStyle = RenderProperties.colors.primary;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        
     
         renderGrid(Math.round(View.scale/2));
     
