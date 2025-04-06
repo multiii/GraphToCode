@@ -114,8 +114,8 @@ export async function BFScompilation(root){
         file += processPriority[i].code + "\n\n";
     }
     
-    file = file.replace("```cpp", "");
-    file = file.replace("```", "");
+    file = file.replace(/```cpp/g, '');
+    file = file.replace(/```/g, '');
 
     downloadResult(file);
 }
