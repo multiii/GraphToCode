@@ -14,12 +14,9 @@ export default function Home() {
           </Link>
           <span className="text-gray-700">•</span>
           <Link href="#pricing" className="text-xl font-light text-gray-700 hover:text-gray-900">
-            Pricing
+            Pricing (Free)
           </Link>
           <span className="text-gray-700">•</span>
-          <Link href="#page3" className="text-xl font-light text-gray-700 hover:text-gray-900">
-            Page 3
-          </Link>
         </nav>
       </header>
       </div>
@@ -112,7 +109,7 @@ export default function Home() {
         <div className="container mx-auto px-24">
           <div className="font-bold text-4xl mb-6 text-gray-900">CodeItNodeIt!</div>
 
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          {/* <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="space-y-2">
               <div>
                 <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
@@ -157,7 +154,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="text-xl text-center text-gray-500 text-sm border-t pt-4">
             (C) 2025 ··· All Rights Reserved

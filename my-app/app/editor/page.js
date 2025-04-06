@@ -1,6 +1,6 @@
 "use client";
 
-import Canvas, { nodes } from "./canvas"
+import Canvas, {nodes } from "./canvas"
 import React, { useState, useEffect, useRef } from 'react';
 
 const FileExplorerIDE = () => {
@@ -86,14 +86,42 @@ const FileExplorerIDE = () => {
     if (fileMenuOpen) setFileMenuOpen(false);
   };
 
-  const openFileExplorer = () => {
-    return;
-    // Trigger the hidden file input
-    if (fileInputRef.current) {
-      fileInputRef.current.click();
-    }
+  const openFileExplorer = async () => {
+    const dirHandle = await window.showDirectoryPicker();
+
+    const folder = await readDirectory(dirHandle);
+    setFolderStructure(folder);
     setFileMenuOpen(false);
   };
+
+  const readDirectory = async (dirHandle) => {
+    const folder = {
+      name: dirHandle.name,
+      type: 'folder',
+      expanded: true,
+      children: []
+    };
+
+    for await (const [name, handle] of dirHandle.entries()) {
+      if (handle.kind == 'file') {
+        folder.children.push({
+          name, 
+          type: "file",
+          fileHandle: handle
+        });
+      } else if (handle.kind == "directory") {
+        const subFolder = await readDirectory (handle);
+        folder.children.push(subFolder);
+      }
+    }
+
+    folder.children.sort((a, b) => {
+      if (a.type !== b.type) return a.type === 'folder' ? -1 : 1;
+      return a.name.localeCompare(b.name);
+    });
+
+    return folder;
+  }
 
   const createFile = () => {
     let indices = selectedFile.split("\n")[0].split(",");
@@ -145,18 +173,17 @@ const FileExplorerIDE = () => {
       let currentLevel = rootFolder;
       
       rootFolder.name = path[0];
+      
       for (let j = 1; j < path.length; j++) {
         const name = path[j];
         
         if (j === path.length - 1) {
-          // This is a file
           currentLevel.children.push({
             name: name,
             type: 'file',
             file: file
           });
         } else {
-          // This is a folder
           let folder = currentLevel.children.find(child => 
             child.type === 'folder' && child.name === name
           );
@@ -176,7 +203,6 @@ const FileExplorerIDE = () => {
       }
     }
     
-    // Sort each level of the structure (folders first, then files)
     const sortFolder = (folder) => {
       folder.children.sort((a, b) => {
         if (a.type === 'folder' && b.type === 'file') return -1;
@@ -184,7 +210,6 @@ const FileExplorerIDE = () => {
         return a.name.localeCompare(b.name);
       });
       
-      // Recursively sort subfolders
       folder.children.forEach(child => {
         if (child.type === 'folder') {
           sortFolder(child);
@@ -266,17 +291,6 @@ const FileExplorerIDE = () => {
 
   return (
     <div key={key} className="flex flex-col h-screen bg-gray-50 text-gray-900">
-      {/* Hidden file input */}
-      <input
-        type="file"
-        ref={fileInputRef}
-        onChange={handleFileSelection}
-        style={{ display: 'none' }}
-        webkitdirectory="true"
-        directory="true"
-        multiple
-      />
-
       {/* Top Menu Bar */}
       <div className="flex border-b py-2">
         <div className="relative">

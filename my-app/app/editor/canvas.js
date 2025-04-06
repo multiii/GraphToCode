@@ -3,6 +3,11 @@ import {addNodes} from '../../llm-compiler/ai_parser';
 
 export const nodes = [];
 
+export async function makeFullGraph() {
+    nodes = [];
+    addNodes(nodes);
+}
+
 export default function Editor({ state }) {
     const canvasRef = useRef(null);
 
@@ -503,9 +508,10 @@ useEffect(() => {
         }
     }
 
-   
-    addNodes(nodes);   
-
+    
+    // nodes.push(createNode());
+    // nodes.push(createNode());
+    // nodes.push(createNode());
     // nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
     // //nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
     // nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
