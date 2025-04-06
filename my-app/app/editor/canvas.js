@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+export const nodes = [];
+
 export default function Editor() {
     const canvasRef = useRef(null);
 
@@ -335,9 +337,7 @@ export default function Editor() {
         View.scale -= e.deltaY * zoomSpeed;
         View.scale = Math.min(Math.max(View.scale, 0.1), 5); 
     });
-    
-    const nodes = [];
-    
+        
     function createNode(){
         let node = {
             nodeType: {text: "void"},
@@ -419,7 +419,8 @@ export default function Editor() {
     nodes.push(createNode());
     nodes.push(createNode());
     nodes.push(createNode());
-    nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
+    console.log(473643889489348934893489348934);
+    nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; 
     nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
     nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
     nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
