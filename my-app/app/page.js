@@ -7,7 +7,7 @@ export default function Home() {
       {/* Header */}
       <div className="px-80">
       <header className="bg-gray-100 container mx-auto px-6 py-4 my-6 rounded-full flex justify-center-safe gap-128 items-center shadow-3xl shadow-[#c1e6dd] shadow-lg">
-        <div className="font-bold text-3xl text-gray-900">CodeItNodeIt</div>
+        <div className="font-bold text-3xl text-gray-900">CodeItNodeIt!</div>
         <nav className="flex items-center gap-2">
           <Link href="#about" className="text-xl font-light text-gray-700 hover:text-gray-900">
             About
@@ -16,7 +16,6 @@ export default function Home() {
           <Link href="#pricing" className="text-xl font-light text-gray-700 hover:text-gray-900">
             Pricing (Free)
           </Link>
-          <span className="text-gray-700">•</span>
         </nav>
       </header>
       </div>
@@ -32,7 +31,7 @@ export default function Home() {
               like never before
             </h1>
             <Link href="/editor">
-              <button className="cursor-pointer ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] text-gray-900 bg-white text-gray-700 px-28 py-12 rounded-full shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow">
+              <button className="text-lg font-bold cursor-pointer ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] text-gray-900 bg-white text-gray-700 py-4 px-8 rounded-full shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow">
                 Try now <ArrowRight className="w-8 h-8" />
               </button>
             </Link>

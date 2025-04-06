@@ -32,6 +32,7 @@ export default function Editor({ state }) {
 
     let ranEffect = false;
     useEffect(() => {
+        console.log("Effect used!")
     if(ranEffect) return;
     ranEffect = true;
 
@@ -700,7 +701,7 @@ export default function Editor({ state }) {
     // nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
     
     function render(){
-        console.log(nodes)
+        // console.log(nodes)
         ctx.fillStyle = RenderProperties.colors.primary;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 

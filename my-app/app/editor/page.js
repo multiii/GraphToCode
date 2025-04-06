@@ -36,7 +36,7 @@ const FileExplorerIDE = () => {
   
 
   const onHeaderClick = () => {
-    console.log(0, state.view)
+
     if (state.view == "file") {
       setState({mode: state.mode, view: "header"})
       console.log(0, state.view)
