@@ -12,6 +12,7 @@
   "dependencies": {
     "@google/genai": "^0.7.0",
     "@octokit/rest": "^21.1.1",
+    "framer-motion": "^12.6.3",
     "lucide-react": "^0.487.0",
     "next": "15.2.4",
     "react": "^19.0.0",
