@@ -3,6 +3,11 @@ import {addNodes} from '../../llm-compiler/ai_parser';
 
 export const nodes = [];
 
+export async function makeFullGraph() {
+    nodes = [];
+    addNodes(nodes);
+}
+
 export default function Editor({ state }) {
     const canvasRef = useRef(null);
 
@@ -477,9 +482,6 @@ useEffect(() => {
             }
         }
     }
-
-   
-    addNodes(nodes);   
 
     
     // nodes.push(createNode());
