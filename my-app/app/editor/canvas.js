@@ -363,7 +363,6 @@ export default function Editor({ state }) {
 
         if (!isDragging) return;
     
-        console.log(View.scale);
         let dx = e.clientX - lastX;
         let dy = e.clientY - lastY;
         dx *= 1.5;
@@ -430,8 +429,15 @@ export default function Editor({ state }) {
     canvas.addEventListener('wheel', (e) => {
         e.preventDefault(); 
         let zoomSpeed = 0.001; 
+
+        const worldX = (e.clientX - View.x) / View.scale;
+        const worldY = (e.clientY - View.y) / View.scale;
+
         View.scale -= e.deltaY * zoomSpeed;
         View.scale = Math.min(Math.max(View.scale, 0.1), 5); 
+
+        View.x = e.clientX - worldX * View.scale;
+        View.y = e.clientY - worldY * View.scale;
     });
         
     function createNode(){
