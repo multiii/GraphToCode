@@ -10,14 +10,12 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@google/genai": "^0.7.0",
+    "@octokit/rest": "^21.1.1",
     "lucide-react": "^0.487.0",
     "next": "15.2.4",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0",
-    "@google/genai": "^0.7.0",
-    "tree-sitter": "^0.22.4",
-    "tree-sitter-c": "^0.23.5",
-    "tree-sitter-cpp": "^0.23.4"
+    "react-dom": "^19.0.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
