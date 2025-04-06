@@ -1,25 +1,56 @@
 import { useEffect, useRef } from 'react';
 
-export const nodes = [];
+import {addNodes} from '../../llm-compiler/ai_parser';
+
+// can't be constant because it needs to be able to be cleared
+export let nodes = [];
+export const View = {
+    x: 0,
+    y: 0,
+    scale: 1,
+    activeNode: null,
+    activeNodeFeature: null,
+    activeFeatureTextPosition: 0,
+    activeConnectionHandle: null,
+    mouseX: 0,
+    mouseY: 0
+}
+
+export async function makeFullGraph(dirHandle) {
+    nodes = [];
+    addNodes(nodes, dirHandle);
+}
 
 export default function Editor({ state }) {
     const canvasRef = useRef(null);
 
-useEffect(() => {
+    const stateRef = useRef(state)
+
+    useEffect(() => {
+    stateRef.current = state
+    }, [state])
+
+    let ranEffect = false;
+    useEffect(() => {
+    if(ranEffect) return;
+    ranEffect = true;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
+    const settings = {
+        width: canvas.width,
+        height: canvas.height,
+        iterations: 1000,
+        area: canvas.width * canvas.height,
+        gravity: 10,
+        speed: 1.00,
+        margin: 25,
+    };
+
+    settings.repulsiveForce = 10;
     
-    const View = {
-        x: 0,
-        y: 0,
-        scale: 1,
-        activeNode: null,
-        activeNodeFeature: null,
-        activeFeatureTextPosition: 0,
-        activeConnectionHandle: null,
-        mouseX: 0,
-        mouseY: 0
-    }
+    
     
     function clamp(x, a, b){
         if(x < a) return a;
@@ -71,7 +102,7 @@ useEffect(() => {
     }
     
     function renderNode(node){
-    
+        // console.log(node);
         renderConnections(node);
 
         ctx.font = "18px lexend";
@@ -90,8 +121,8 @@ useEffect(() => {
         let descriptionText = [];
 
 
-        for(let i = 0; i < node.naturalLanguageDescription.text.length; i++){
-            if(ctx.measureText(node.naturalLanguageDescription.text.substring(pos1, pos2)).width >= node.width-30 || i == node.naturalLanguageDescription.text.length-1){
+        for(let i = 0; i <= node.naturalLanguageDescription.text.length; i++){
+            if(ctx.measureText(node.naturalLanguageDescription.text.substring(pos1, pos2)).width >= node.width-30 || i == node.naturalLanguageDescription.text.length){
                 
                 descriptionText.push(node.naturalLanguageDescription.text.substring(pos1, pos2));
                 pos1 = pos2;
@@ -284,32 +315,55 @@ useEffect(() => {
     let isDragging = false;
     let lastX = 0;
     let lastY = 0;
+
+    function transformCursor(e){
+        let x = (e.clientX-canvas.offsetLeft)/canvas.offsetWidth * canvas.width;
+        let y = (e.clientY-canvas.offsetTop)/canvas.offsetHeight * canvas.height;
+        x = (x - View.x)/View.scale;
+        y = (y - View.y)/View.scale;
+        return {x, y};
+    }
+
+    function addNodeFromClick(e){
+        let x = transformCursor(e).x;
+        let y = transformCursor(e).y;
+        let node = createNode();
+        node.x = x;
+        node.y = y;
+        nodes.push(node);
+    }
     
     canvas.addEventListener("mousedown", (e) => {
         isDragging = true;
         lastX = e.clientX;
         lastY = e.clientY;
-        resolveClick(e);
+
+        if(stateRef.current.mode == "add"){
+            addNodeFromClick(e);
+            return;
+        }
+
+        if(View.activeConnectionHandle){
+            let node = findConnectionNode(transformCursor(e).x, transformCursor(e).y, "right");
+             
+            if(node == null) return;
+
+            node.dependencies.push(View.activeConnectionHandle);
+            View.activeConnectionHandle = null;
+        }
+
+        resolveClick(e);        
     });
     document.addEventListener("mouseup", (e) => {
         isDragging = false;
 
-        if(View.activeConnectionHandle){
-            let node = findConnectionNode(x, y, "right");
-            if(node == null) return;
-
-            
-        }
+        
     });
     document.addEventListener("mousemove", (e) => {
-        let x = (e.clientX-canvas.offsetLeft)/canvas.offsetWidth * canvas.width;
-        let y = (e.clientY-canvas.offsetTop)/canvas.offsetHeight * canvas.height;
-        x = (x - View.x)/View.scale;
-        y = (y - View.y)/View.scale;
-
-        View.mouseX = x;
-        View.mouseY = y;
-
+        // console.log(View.x);
+        // console.log(View.y);
+        View.mouseX = transformCursor(e).x;
+        View.mouseY = transformCursor(e).y;
 
         if (!isDragging) return;
     
@@ -322,8 +376,8 @@ useEffect(() => {
             View.x += dx;
             View.y += dy;
         } else {
-            View.activeNode.x += dx;
-            View.activeNode.y += dy;
+            View.activeNode.x += dx / View.scale;
+            View.activeNode.y += dy / View.scale;
         }
         lastX = e.clientX;
         lastY = e.clientY;
@@ -333,11 +387,13 @@ useEffect(() => {
     
     
     document.addEventListener("keydown", (e) => {
+        
         if(e.key == "Backspace"){
             if(View.activeNodeFeature != null){
     
                 View.activeNodeFeature.text = View.activeNodeFeature.text.substring(0, View.activeFeatureTextPosition-1) + View.activeNodeFeature.text.substring(View.activeFeatureTextPosition);
                 View.activeFeatureTextPosition--;
+                if(View.activeFeatureTextPosition < 0) View.activeFeatureTextPosition = 0;
     
                 if(View.activeNodeFeature.text == ""){
                     //stupid logic 
@@ -348,7 +404,17 @@ useEffect(() => {
                         }
                     }
                 }
+                return;
             }
+            
+        }
+        //delete node
+        if(e.key == "x" && View.activeNode != null && View.activeNodeFeature == null){
+            for(let i  = 0; i < nodes.length; i++){
+                if(nodes[i] == View.activeNode)
+                    return nodes.splice(i, 1);
+            }
+            return;
         }
         if(e.key == "ArrowRight"){
             if(View.activeNodeFeature != null){
@@ -360,7 +426,10 @@ useEffect(() => {
         }
         if(e.key.length == 1){
             if(View.activeNodeFeature != null){
-                View.activeNodeFeature.text = View.activeNodeFeature.text.substring(0, View.activeFeatureTextPosition) + e.key + View.activeNodeFeature.text.substring(View.activeFeatureTextPosition);
+                let beforeText = View.activeNodeFeature.text.slice(0, View.activeFeatureTextPosition);
+                let afterText = View.activeNodeFeature.text.slice(View.activeFeatureTextPosition);
+        
+                View.activeNodeFeature.text = beforeText + e.key + afterText;
                 View.activeFeatureTextPosition++;
             }
         }
@@ -369,8 +438,15 @@ useEffect(() => {
     canvas.addEventListener('wheel', (e) => {
         e.preventDefault(); 
         let zoomSpeed = 0.001; 
+
+        const worldX = (e.clientX - View.x) / View.scale;
+        const worldY = (e.clientY - View.y) / View.scale;
+
         View.scale -= e.deltaY * zoomSpeed;
         View.scale = Math.min(Math.max(View.scale, 0.1), 5); 
+
+        View.x = e.clientX - worldX * View.scale;
+        View.y = e.clientY - worldY * View.scale;
     });
         
     function createNode(){
@@ -406,10 +482,10 @@ useEffect(() => {
         //connect nodes things
         for(let i in nodes){
             let left = getNodeLeftConnectionPoint(nodes[i]);
-            let right = getNodeLeftConnectionPoint(nodes[i]);
+            let right = getNodeRightConnectionPoint(nodes[i]);
 
             let leftSelected = (Math.hypot(x-left.x, y-left.y) < 10);
-            let rightSelected = (Math.hypot(x-right.x, y-right.y) < 10);
+            let rightSelected = (Math.hypot(x-right.x, y-right.y) < 20);
 
             if(mode == "left" && leftSelected) return nodes[i];
             if(mode == "right" && rightSelected) return nodes[i];
@@ -418,16 +494,15 @@ useEffect(() => {
     }
     
     function resolveClick(e){
-        let x = (e.clientX-canvas.offsetLeft)/canvas.offsetWidth * canvas.width;
-        let y = (e.clientY-canvas.offsetTop)/canvas.offsetHeight * canvas.height;
-        x = (x - View.x)/View.scale;
-        y = (y - View.y)/View.scale;
+        let x = transformCursor(e).x;
+        let y = transformCursor(e).y;
     
         View.activeNode = null;
         View.activeNodeFeature = null;
         View.activeConnectionHandle = null;
 
         View.activeConnectionHandle = findConnectionNode(x, y, "left");
+
 
         for(let i in nodes){
             if(isPointInNode(x, y, nodes[i])){
@@ -470,29 +545,174 @@ useEffect(() => {
         }
     }
 
-    function drawHalfConnection(){
+    function collisionDetection() {
+        nodes.forEach((node, i) => {
+            nodes.forEach((otherNode, j) => {
+                if (i === j) return; 
+                if (
+                    node.x - settings.margin < otherNode.x + otherNode.width + settings.margin &&
+                    node.x + node.width + settings.margin > otherNode.x - settings.margin &&
+                    node.y - settings.margin < otherNode.y + otherNode.height + settings.margin &&
+                    node.y + node.height + settings.margin > otherNode.y - settings.margin
+                ) {
+                    const overlapX = Math.min(
+                        node.x + node.width + settings.margin - (otherNode.x - settings.margin),
+                        otherNode.x + otherNode.width + settings.margin - (node.x - settings.margin)
+                    );
+                    const overlapY = Math.min(
+                        node.y + node.height + settings.margin - (otherNode.y - settings.margin),
+                        otherNode.y + otherNode.height + settings.margin - (node.y - settings.margin)
+                    );
 
+                    if (overlapX < overlapY) {
+                        if (node.x < otherNode.x) {
+                            node.x -= overlapX / 2;
+                            otherNode.x += overlapX / 2;
+                        } else {
+                            node.x += overlapX / 2;
+                            otherNode.x -= overlapX / 2;
+                        }
+                    } else {
+                        if (node.y < otherNode.y) {
+                            node.y -= overlapY / 2;
+                            otherNode.y += overlapY / 2;
+                        } else {
+                            node.y += overlapY / 2;
+                            otherNode.y -= overlapY / 2;
+                        }
+                    }
+                }
+            });
+        });
     }
+
+
+    function resolveLineCollisions() {
+        const getCenter = (node) => ({
+            x: node.x + node.width / 2,
+            y: node.y + node.height / 2,
+        });
+
+        function lineIntersectsNode(x1, y1, x2, y2, node) {
+            const left = node.x;
+            const right = node.x + node.width + settings.margin;
+            const top = node.y;
+            const bottom = node.y + node.height + settings.margin;
+
+            return (
+                lineIntersectsLine(x1, y1, x2, y2, left, top, right, top) || 
+                lineIntersectsLine(x1, y1, x2, y2, right, top, right, bottom) || 
+                lineIntersectsLine(x1, y1, x2, y2, right, bottom, left, bottom) || 
+                lineIntersectsLine(x1, y1, x2, y2, left, bottom, left, top) 
+            );
+        }
+
+        function lineIntersectsLine(x1, y1, x2, y2, x3, y3, x4, y4) {
+            const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+            if (den === 0) return false;
+
+            const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+            const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+
+            return t >= 0 && t <= 1 && u >= 0 && u <= 1;
+        }
+
+        nodes.forEach(source => {
+            const start = getCenter(source);
+
+            source.dependencies.forEach(target => {
+                const end = getCenter(target);
+
+                nodes.forEach(other => {
+                    if (other === source || other === target) return;
+
+                    if (lineIntersectsNode(start.x, start.y, end.x, end.y, other)) {
+                        other.x += 10;
+                        other.y += 10;
+                    }
+                });
+            });
+        });
+    }
+
+
+
+
+
+    function applyForces () {
+        nodes.forEach(node => {
+            node.dx = 0;
+            node.dy = 0;
+
+            nodes.forEach(otherNode=>{
+                if (node != otherNode) {
+                    let dx = node.x - otherNode.x;
+                    let dy = node.y - otherNode.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy) + 0.01;
+                    if (distance > 300) distance = 100000;
+                    let repulsiveForce = (settings.repulsiveForce * settings.repulsiveForce) / distance;
+                    node.dx += (dx / distance) * repulsiveForce;
+                    node.dy += (dy / distance) * repulsiveForce;
+                }
+            });
+
+            node.dependencies.forEach(otherNode=> {
+                let source = node;
+                let target = otherNode; 
+                let dx = target.x - source.x;
+                let dy = target.y - source.y;
+                let distance = Math.sqrt(dx * dx + dy * dy) + 0.01;
+
+                if (distance < 300) distance = 0;
+
+                let attractiveForce = (distance * distance) / 4000;
+
+                attractiveForce = Math.max(0, Math.min(attractiveForce, 2));
+                
+                source.dx += (dx / distance) * attractiveForce;
+                source.dy += (dy / distance) * attractiveForce;
+                target.dx -= (dx / distance) * attractiveForce;
+                target.dy -= (dy / distance) * attractiveForce;
+            });
+        });
+
+
+        nodes.forEach(node => {
+            let distance = Math.sqrt(node.dx * node.dx + node.dy * node.dy);
+            if (distance > 0) {
+                let limitedDistance = Math.min(settings.speed * distance, distance);
+                node.x += (node.dx / distance) * limitedDistance;
+                node.y += (node.dy / distance) * limitedDistance;
+            }
+
+            // node.x = Math.min(settings.width, Math.max(0, node.x));
+            // node.y = Math.min(settings.height, Math.max(0, node.y));
+        });
+    }
+
     
-    nodes.push(createNode());
-    nodes.push(createNode());
-    nodes.push(createNode());
-    nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
-    //nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
-    nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
-    nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
+    // nodes.push(createNode());
+    // nodes.push(createNode());
+    // nodes.push(createNode());
+    // nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
+    // //nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
+    // nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
+    // nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
     
     function render(){
         console.log(nodes)
         ctx.fillStyle = RenderProperties.colors.primary;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-        
     
         renderGrid(Math.round(View.scale/2));
     
         ctx.translate(View.x, View.y);
         ctx.scale(View.scale, View.scale);
+
+        // applyForces();
+        collisionDetection();
+        // resolveLineCollisions();
 
         for(let i in nodes)
             renderNode(nodes[i]);
