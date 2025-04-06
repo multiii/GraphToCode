@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+export const nodes = [];
+
 export default function Editor() {
     const canvasRef = useRef(null);
 
@@ -290,9 +292,7 @@ export default function Editor() {
         View.scale -= e.deltaY * zoomSpeed;
         View.scale = Math.min(Math.max(View.scale, 0.1), 5); 
     });
-    
-    const nodes = [];
-    
+        
     function createNode(){
         let node = {
             nodeType: "void",

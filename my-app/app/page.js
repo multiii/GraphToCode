@@ -26,7 +26,7 @@ export default function Home() {
       <main className="flex-grow">
         <div className="bg-linear-to-b from-[#e2f2ee] to-gray-100">
           {/* Hero Section */}
-          <section className="container mx-auto px-24 pt-16 pb-32  text-center">
+          <section className="container mx-auto px-24 pt-32 pb-32  text-center">
             <h1 className="text-6xl mb-12 text-gray-900">
               Insert purpose and
               <br />

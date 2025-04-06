@@ -1,11 +1,13 @@
 "use client";
 
-import Canvas from "./canvas"
+import Canvas, { nodes } from "./canvas"
 import React, { useState } from 'react';
 
 const FileExplorerIDE = () => {
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
   const [compileMenuOpen, setCompileMenuOpen] = useState(false);
+  const [viewMenuOpen, setViewMenuOpen] = useState(false);
+  const [drawMenuOpen, setDrawMenuOpen] = useState(false);
   const [folderStructure, setFolderStructure] = useState({
     name: 'WORKSPACE',
     type: 'folder',
@@ -18,11 +20,29 @@ const FileExplorerIDE = () => {
   const toggleFileMenu = () => {
     setFileMenuOpen(!fileMenuOpen);
     if (compileMenuOpen) setCompileMenuOpen(false);
+    if (drawMenuOpen) setDrawMenuOpen(false);
+    if (viewMenuOpen) setViewMenuOpen(false);
   };
 
   const toggleCompileMenu = () => {
     setCompileMenuOpen(!compileMenuOpen);
     if (fileMenuOpen) setFileMenuOpen(false);
+    if (drawMenuOpen) setDrawMenuOpen(false);
+    if (viewMenuOpen) setViewMenuOpen(false);
+  };
+
+  const toggleViewMenu = () => {
+    setViewMenuOpen(!compileMenuOpen);
+    if (fileMenuOpen) setFileMenuOpen(false);
+    if (compileMenuOpen) setCompileMenuOpen(false);
+    if (drawMenuOpen) setDrawMenuOpen(false);
+  };
+
+  const toggleDrawMenu = () => {
+    setDrawMenuOpen(!drawMenuOpen);
+    if (compileMenuOpen) setCompileMenuOpen(false);
+    if (fileMenuOpen) setFileMenuOpen(false);
+    if (viewMenuOpen) setViewMenuOpen(false);
   };
 
   const openFileExplorer = () => {
@@ -32,6 +52,10 @@ const FileExplorerIDE = () => {
     }
     setFileMenuOpen(false);
   };
+
+  const createFile = () => {
+    console.log(selectedFile.split("\n")[0]);
+  }
 
   const handleFileSelection = (event) => {
     const files = event.target.files;
@@ -155,8 +179,8 @@ const FileExplorerIDE = () => {
       return (
         <div 
           key={path + node.name} 
-          className={`font-light py-1 pl-4 cursor-pointer ${selectedFile === (path + node.name) ? 'bg-blue-100' : ''}`}
-          onClick={() => setSelectedFile(path + node.name)}
+          className={`font-light py-1 pl-4 cursor-pointer ${selectedFile === (path + "\n" + node.name) ? 'bg-blue-100' : ''}`}
+          onClick={() => setSelectedFile(path + "\n" + node.name)}
         >
           {node.name}
         </div>
@@ -215,6 +239,45 @@ const FileExplorerIDE = () => {
             </div>
           )}
         </div>
+        <div className="relative">
+          <button 
+            className="px-4 py-2 hover:bg-gray-200 text-gray-900" 
+            onClick={toggleViewMenu}
+          >
+            View
+          </button>
+          {viewMenuOpen && (
+            <div className="absolute top-full left-0 bg-white shadow-md border z-10 w-48">
+              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+                File View
+              </button>
+              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+                Header View
+              </button>
+            </div>
+          )}
+        </div>
+        <div className="relative">
+          <button 
+            className="px-4 py-2 hover:bg-gray-200 text-gray-900" 
+            onClick={toggleDrawMenu}
+          >
+            Draw
+          </button>
+          {drawMenuOpen && (
+            <div className="absolute top-full left-0 bg-white shadow-md border z-10 w-48">
+              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+                Cursor
+              </button>
+              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+                Add Node
+              </button>
+              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+                Add Connector
+              </button>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Main Content */}
@@ -223,7 +286,7 @@ const FileExplorerIDE = () => {
         <div className="w-64 border-r overflow-y-auto bg-white">
           <div className="flex justify-between items-center p-2 border-b">
             <span className="font-bold">{folderStructure.name}</span>
-            <button className="text-xl">+</button>
+            <button className="text-xl" onClick={createFile}>+</button>
           </div>
           <div className="p-2">
             {folderStructure.children.length > 0 ? (
@@ -240,10 +303,10 @@ const FileExplorerIDE = () => {
 
         {/* Main Editor Area */}
         <div className="flex-1 p-4 bg-white">
-          {/* {selectedFile ? 
-            <p>Currently selected: {selectedFile}</p> : 
-            <p>Select a file to begin editing</p>
-          } */}
+            {/* {selectedFile ? 
+              <p>Currently selected: {selectedFile}</p> : 
+              <p>Select a file to begin editing</p>
+            } */}
           <Canvas/>
         </div>
       </div>
