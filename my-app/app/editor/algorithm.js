@@ -1,5 +1,5 @@
 //BFS
-
+import { promptGemini } from "../../llm-compiler/ai_parser.js";
 
 
 export function BFS(root){
@@ -61,6 +61,16 @@ function generateFunctionPrompt(node){
     return prompt;
 }
 
+function downloadResult(file){
+    const blob = new Blob([file], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'graph-to-code-demo.hpp';
+    a.click();
+   RL.revokeObjectURL(url);
+}
+
 export async function BFScompilation(root){
 
     let processPriority = BFS(root);
@@ -85,12 +95,27 @@ export async function BFScompilation(root){
 
         const epicPromptString = 
         `
+        You must write a piece of code in C++ according to the following information: Do not write any other code than what is asked.
         (C++) USE THESE FUNCTIONS AND CLASS PROTOTYPES AS CONTEXT FOR WRITING THE CODE:
         ${context}
-        ---------
-        USE THAT INFORMATION TO WRITE A FUNCTION BASED ON THE FOLLOWING INFORMATION IN C++:
+        [end of context]---------
+        Use that information to write a single function definition. Do not define anything that was given as context or include it in the response: ONLY WRITE CODE, DO NOT GIVE ANY TEXT, ONLY CODE
+        Use the following information for the structure:
         ${nodePrompt}
         `;
-        console.log(epicPromptString);
+
+        let response = await promptGemini(epicPromptString);
+        node.code = response;
     }
+
+    let file = ``;
+    //build the file
+    for(let i = processPriority.length-1; i >= 0; i--){
+        file += processPriority[i].code + "\n\n";
+    }
+    
+    file = file.replace("```cpp", "");
+    file = file.replace("```", "");
+
+    downloadResult(file);
 }

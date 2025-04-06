@@ -3,7 +3,8 @@ import { readdirSync, readFile, readFileSync, statSync} from "fs";
 import path from "path";
 import { json } from "stream/consumers";
 
-const ai = new GoogleGenAI({apiKey: process.env.GOOGLE_KEY});
+//const ai = new GoogleGenAI({apiKey: process.env.GOOGLE_KEY});
+//const ai = new GoogleGenAI({apiKey: ""});
 
 export async function promptGemini(prompt) {
     const response = await ai.models.generateContent({
