@@ -5,7 +5,7 @@ export const nodes = [];
 export default function Editor() {
     const canvasRef = useRef(null);
 
-    useEffect(() => {
+useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
@@ -15,7 +15,10 @@ export default function Editor() {
         scale: 1,
         activeNode: null,
         activeNodeFeature: null,
-        activeFeatureTextPosition: 0
+        activeFeatureTextPosition: 0,
+        activeConnectionHandle: null,
+        mouseX: 0,
+        mouseY: 0
     }
     
     function clamp(x, a, b){
@@ -32,9 +35,12 @@ export default function Editor() {
         }
     }
     
+    window.resize = () => {
+        setupCanvasTest();
+    }
     function setupCanvasTest(){
-        let w = Math.round(window.innerWidth * window.devicePixelRatio);
-        let h = Math.round(window.innerHeight * window.devicePixelRatio);   
+        let w = Math.round(canvas.offsetWidth * window.devicePixelRatio);
+        let h = Math.round(canvas.offsetHeight * window.devicePixelRatio);   
         canvas.width = w;
         canvas.height = h;
     }
@@ -234,32 +240,43 @@ export default function Editor() {
         
         node.height = computedHeight;
     }
-    
-    function renderConnections(node){
+
+    function renderConnection(p1, p2){
         ctx.strokeStyle = "black";
         ctx.lineWidth = 5;
-        for (let i in node.dependencies) { 
-            let dep = node.dependencies[i];
-            let p1 = getNodeRightConnectionPoint(node);
-            let p2 = getNodeLeftConnectionPoint(dep);
+        for(let i = 0; i < 2; i++){
             let dx = Math.abs(p2.x - p1.x) * 0.5; 
             ctx.beginPath();
             ctx.moveTo(p1.x, p1.y);
-            ctx.bezierCurveTo(p1.x + dx, p1.y,  p2.x - dx, p2.y,p2.x, p2.y);
+            ctx.bezierCurveTo(p1.x + dx, p1.y,  p2.x - dx, p2.y, p2.x, p2.y);
             ctx.stroke();
-        }
-        ctx.strokeStyle = RenderProperties.colors.secondary2;
-        ctx.lineWidth = 3;
-        for (let i in node.dependencies) { 
-            let dep = node.dependencies[i];
-            let p1 = getNodeRightConnectionPoint(node);
-            let p2 = getNodeLeftConnectionPoint(dep);
-            let dx = Math.abs(p2.x - p1.x) * 0.5; 
+
+            let derivativeX = 0.75 * (p2.x - p1.x);
+            let derivativeY = 1.5  * (p2.y - p1.y);  
+            let angle = Math.atan2(derivativeY, derivativeX) + Math.PI/2;
+
+            let s = 15-i;
+
             ctx.beginPath();
-            ctx.moveTo(p1.x, p1.y);
-            ctx.bezierCurveTo(p1.x + dx, p1.y,  p2.x - dx, p2.y,p2.x, p2.y);
+            ctx.moveTo((p1.x+p2.x)/2 + s*Math.cos(angle-Math.PI/4), (p1.y+p2.y)/2 + s*Math.sin(angle-Math.PI/4));
+            ctx.lineTo((p1.x+p2.x)/2, (p1.y+p2.y)/2);
+            ctx.lineTo((p1.x+p2.x)/2 - s*Math.cos(angle+Math.PI/4), (p1.y+p2.y)/2 - s*Math.sin(angle+Math.PI/4));
             ctx.stroke();
+            
+            ctx.strokeStyle = RenderProperties.colors.secondary2;
+            ctx.lineWidth = 3;
         }
+
+    }
+    
+    function renderConnections(node){
+            for (let i in node.dependencies) { 
+                let dep = node.dependencies[i];
+                let p1 = getNodeRightConnectionPoint(node);
+                let p2 = getNodeLeftConnectionPoint(dep);
+                renderConnection(p1, p2);
+            }
+            
     }
     
     setupCanvasTest();
@@ -276,8 +293,24 @@ export default function Editor() {
     });
     document.addEventListener("mouseup", (e) => {
         isDragging = false;
+
+        if(View.activeConnectionHandle){
+            let node = findConnectionNode(x, y, "right");
+            if(node == null) return;
+
+            
+        }
     });
     document.addEventListener("mousemove", (e) => {
+        let x = (e.clientX-canvas.offsetLeft)/canvas.offsetWidth * canvas.width;
+        let y = (e.clientY-canvas.offsetTop)/canvas.offsetHeight * canvas.height;
+        x = (x - View.x)/View.scale;
+        y = (y - View.y)/View.scale;
+
+        View.mouseX = x;
+        View.mouseY = y;
+
+
         if (!isDragging) return;
     
         let dx = e.clientX - lastX;
@@ -294,6 +327,8 @@ export default function Editor() {
         }
         lastX = e.clientX;
         lastY = e.clientY;
+
+        
     });
     
     
@@ -366,6 +401,21 @@ export default function Editor() {
             x <= node.x + node.width &&
             y <= node.y + node.height);
     }
+
+    function findConnectionNode(x, y, mode){
+        //connect nodes things
+        for(let i in nodes){
+            let left = getNodeLeftConnectionPoint(nodes[i]);
+            let right = getNodeLeftConnectionPoint(nodes[i]);
+
+            let leftSelected = (Math.hypot(x-left.x, y-left.y) < 10);
+            let rightSelected = (Math.hypot(x-right.x, y-right.y) < 10);
+
+            if(mode == "left" && leftSelected) return nodes[i];
+            if(mode == "right" && rightSelected) return nodes[i];
+        }
+        return null;
+    }
     
     function resolveClick(e){
         let x = (e.clientX-canvas.offsetLeft)/canvas.offsetWidth * canvas.width;
@@ -375,6 +425,10 @@ export default function Editor() {
     
         View.activeNode = null;
         View.activeNodeFeature = null;
+        View.activeConnectionHandle = null;
+
+        View.activeConnectionHandle = findConnectionNode(x, y, "left");
+
         for(let i in nodes){
             if(isPointInNode(x, y, nodes[i])){
                 View.activeNode = nodes[i];
@@ -415,27 +469,37 @@ export default function Editor() {
             }
         }
     }
+
+    function drawHalfConnection(){
+
+    }
     
     nodes.push(createNode());
     nodes.push(createNode());
     nodes.push(createNode());
-    console.log(473643889489348934893489348934);
-    nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; 
-    nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
+    nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
+    //nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
     nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
     nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
     
     function render(){
         ctx.fillStyle = RenderProperties.colors.primary;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        
     
         renderGrid(Math.round(View.scale/2));
     
         ctx.translate(View.x, View.y);
         ctx.scale(View.scale, View.scale);
-    
+
         for(let i in nodes)
             renderNode(nodes[i]);
+
+        //partial connection
+        if(View.activeConnectionHandle != null)
+            renderConnection({x: View.mouseX, y: View.mouseY}, getNodeLeftConnectionPoint(View.activeConnectionHandle));
+        
     
         ctx.resetTransform();
         requestAnimationFrame(render);
