@@ -21,12 +21,31 @@ export async function GET (req) {
     return Response.json({result: system_prompt});
 }
 
-export async function POST (req) {
-    let {prompt} = await req.json();
+export async function POST(req) {
+    try {
+        const { prompt } = await req.json();
 
-    const response = await ai.models.generateContent({
-        model: "gemini-2.0-flash",
-        contents: prompt,
-    });
-    return Response.json({ result: response.text });
+        if (!prompt || prompt.trim() === "") {
+            return new Response(
+                JSON.stringify({ error: "Prompt is required and cannot be empty." }),
+                { status: 400, headers: { "Content-Type": "application/json" } }
+            );
+        }
+
+        const response = await ai.models.generateContent({
+            model: "gemini-2.0-flash",
+            contents: prompt,
+        });
+
+        return new Response(JSON.stringify({ result: response.text }), {
+            status: 200,
+            headers: { "Content-Type": "application/json" },
+        });
+    } catch (error) {
+        console.error("Error in POST:", error.message);
+        return new Response(
+            JSON.stringify({ error: "An error occurred while processing your request." }),
+            { status: 500, headers: { "Content-Type": "application/json" } }
+        );
+    }
 }
