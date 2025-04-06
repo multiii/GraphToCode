@@ -12,6 +12,12 @@ export async function makeFullGraph(dirHandle) {
 export default function Editor({ state }) {
     const canvasRef = useRef(null);
 
+    const stateRef = useRef(state)
+
+    useEffect(() => {
+    stateRef.current = state
+    }, [state])
+
     
 useEffect(() => {
     const canvas = canvasRef.current;
@@ -315,7 +321,7 @@ useEffect(() => {
         lastX = e.clientX;
         lastY = e.clientY;
 
-        if(state.mode == "add"){
+        if(stateRef.current.mode == "add"){
             addNodeFromClick(e);
             return;
         }
@@ -543,7 +549,7 @@ useEffect(() => {
     
     render();
 
-}, [state]);
+}, []);
 
     return (
         <canvas ref={canvasRef} style={{ width: '100%', height: '100%'}}></canvas>
