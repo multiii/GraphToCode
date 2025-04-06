@@ -65,8 +65,36 @@ export default function Editor() {
     function renderNode(node){
     
         renderConnections(node);
+
+        ctx.font = "18px lexend";
+        //measure input widths as well to get length
+        for(let i = 0; i < node.inputs.length; i++){
+            let textWidth = ctx.measureText(node.inputs[i].text).width;
+            node.width = Math.max(node.width, textWidth+14);
+        }
+
+
+        //find the height of description
+        let pos1 = 0;
+        let pos2 = 0;
+        let descriptionTop = 0;
+
+        let descriptionText = [];
+
+
+        for(let i = 0; i < node.naturalLanguageDescription.text.length; i++){
+            if(ctx.measureText(node.naturalLanguageDescription.text.substring(pos1, pos2)).width >= node.width-30 || i == node.naturalLanguageDescription.text.length-1){
+                
+                descriptionText.push(node.naturalLanguageDescription.text.substring(pos1, pos2));
+                pos1 = pos2;
+                descriptionTop += 20;
+            }
+            pos2++;
+        }
     
-        let computedHeight = 90 + (node.inputs.length+1)*29 + 40;
+        descriptionTop += 8;
+        node.descriptionHeight = descriptionTop;
+        let computedHeight = 90 + (node.inputs.length+1)*29 + descriptionTop;
         
         ctx.strokeStyle = "black"; RenderProperties.colors.secondary2;
         ctx.lineWidth = 1;
@@ -83,21 +111,27 @@ export default function Editor() {
         ctx.shadowBlur = 0;
         ctx.shadowColor = "";
     
-        let type = node.nodeType;
-        let namespace = node.nodeNamespace;
-        let symbol = node.nodeName;
+        let type = node.nodeType.text;
+        let namespace = node.nodeNamespace.text;
+        let symbol = node.nodeName.text;
     
         let textSize = 25;
     
         ctx.font = "20px lexend";
     
         let typeWidth = ctx.measureText(type).width+6+10;
-        let namespaceWidth = ctx.measureText(namespace).width+6*ctx.measureText(namespace).width;
-        let symbolWidth = ctx.measureText(symbol).width+6;
+        let namespaceWidth = ctx.measureText(namespace).width+6;
+        let symbolWidth = ctx.measureText(symbol).width+12;
         let totalWidth = typeWidth + namespaceWidth + symbolWidth;
     
+        node.width = Math.max(node.width, totalWidth);
+        node.width = Math.max(250, node.width);
+
         ctx.fillStyle = RenderProperties.colors.secondary2;
     
+        node.typeWidth = typeWidth;
+        node.namespaceWidth = namespaceWidth;
+        node.nameWidth =  symbolWidth;
         
     
         ctx.fillRect(node.x, node.y, typeWidth, textSize + 6);
@@ -134,7 +168,10 @@ export default function Editor() {
         let inputTop = 2*textSize+8 + 10;
     
         ctx.font = "18px lexend";
+
+        
         for(let i = 0; i < node.inputs.length+1; i++){
+
             ctx.strokeStyle = "black";
             
             let editOn = (i < node.inputs.length && View.activeNodeFeature == node.inputs[i]);
@@ -148,6 +185,8 @@ export default function Editor() {
             ctx.fill();
             ctx.stroke();
             ctx.fillStyle = "black";
+
+            
     
             if(editOn && Math.sin(Date.now()/200) > 0){
                 ctx.fillStyle = "black";  
@@ -170,8 +209,11 @@ export default function Editor() {
         ctx.fillText("DESCRIPTION", node.x+4, node.y+inputTop+5);
         inputTop += 20;
     
-        let descriptionHeight = 40;
+        let descriptionHeight = descriptionTop;
     
+        if(node.naturalLanguageDescription == View.activeNodeFeature){
+            ctx.strokeStyle = "blue"; 
+        }
         ctx.fillStyle = "white";
         ctx.beginPath();
         ctx.roundRect(node.x+4, node.y+inputTop-10, node.width-8, descriptionHeight, 5);
@@ -180,8 +222,11 @@ export default function Editor() {
     
         ctx.fillStyle = "black";
         ctx.font = "18px lexend";
-        ctx.fillText(node.naturalLanguageDescription, node.x+8, node.y+inputTop+10);
-    
+        //ctx.fillText(node.naturalLanguageDescription, node.x+8, node.y+inputTop+10);
+        
+        for(let i in descriptionText){
+            ctx.fillText(descriptionText[i], node.x+8, node.y+inputTop+10+20*i);
+        }
         
         inputTop += 29;
         
@@ -295,18 +340,22 @@ export default function Editor() {
     
     function createNode(){
         let node = {
-            nodeType: "void",
-            nodeNamespace: "",
-            nodeName: "test",
+            nodeType: {text: "void"},
+            nodeNamespace: {text: ""},
+            nodeName: {text: "nodeName"},
             inputs: [],
-            naturalLanguageDescription: "",
+            naturalLanguageDescription: {text: ""},
             dependencies: [],
             parentFile: ".hpp",
             code: "",
             x: 0,
             y: 0,
-            width: 250,
-            height: 0
+            width: 300,
+            descriptionHeight: 0,
+            height: 0,
+            typeWidth: 0,
+            namespaceWidth: 0,
+            nameWidth: 0
         }
         return node;
     }
@@ -338,15 +387,31 @@ export default function Editor() {
                             node.inputs.push({text: ""});
                             
                         }
-                        View.activeFeatureTextPosition = node.inputs[j].text.length;
+                        
                         View.activeNodeFeature = node.inputs[j];
                         //alert("a");
                     }
                 }
     
+                //decription box
+                if(isPointInNode(x, y, {x: node.x, y: node.y+107+29*nodes[i].inputs.length, width: node.width, height: node.descriptionHeight})){
+                    View.activeNodeFeature = node.naturalLanguageDescription;
+                }
+
+                //stuff ashyfihaussdfghjbhljadflhjksfg
+                if(isPointInNode(x, y, {x: node.x, y: node.y, width: node.typeWidth, height: 20}))
+                    View.activeNodeFeature = node.nodeType;
+                if(isPointInNode(x, y, {x: node.x+node.typeWidth, y: node.y, width: node.namespaceWidth, height: 20}))
+                    View.activeNodeFeature = node.nodeNamespace;
+                if(isPointInNode(x, y, {x: node.x+node.typeWidth+node.namespaceWidth, y: node.y, width: node.nameWidth, height: 20}))
+                    View.activeNodeFeature = node.nodeName;
+                
+
                 if(isPointInNode(x, y, getNodeLeftConnectionPoint(node))){
                     //activeNodeFeature = k
                 }
+                if(View.activeNodeFeature != null)
+                    View.activeFeatureTextPosition = View.activeNodeFeature.text.length;
             }
         }
     }
@@ -354,13 +419,14 @@ export default function Editor() {
     nodes.push(createNode());
     nodes.push(createNode());
     nodes.push(createNode());
-    nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; 
+    nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
     nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
     nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
-    nodes[0].naturalLanguageDescription = "main function that calls some functions";
+    nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
     
     function render(){
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.fillStyle = RenderProperties.colors.primary;
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
     
         renderGrid(Math.round(View.scale/2));
     

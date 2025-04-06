@@ -173,7 +173,7 @@ function renderNode(node){
     ctx.font = "15px lexend";
     ctx.fillStyle = "black";
     ctx.fillText("DESCRIPTION", node.x+4, node.y+inputTop+5);
-    inputTop += 20;
+    inputTop += 20;   
 
     let descriptionHeight = 40;
 
@@ -306,7 +306,7 @@ function createNode(){
         inputs: [],
         naturalLanguageDescription: "",
         dependencies: [],
-        parentFile: ".hpp",
+        filePath: ".hpp",
         code: "",
         x: 0,
         y: 0,
@@ -359,7 +359,7 @@ function resolveClick(e){
 nodes.push(createNode());
 nodes.push(createNode());
 nodes.push(createNode());
-nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; 
+nodes[0].nodeType.text = "int"; nodes[0].nodeName.text = "main"; 
 nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
 nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
 nodes[0].naturalLanguageDescription = "main function that calls some functions";
