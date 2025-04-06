@@ -1,9 +1,20 @@
 import { useEffect, useRef } from 'react';
-import {BFS} from "./algorithm"
+
 import {addNodes} from '../../llm-compiler/ai_parser';
 
 // can't be constant because it needs to be able to be cleared
 export let nodes = [];
+export const View = {
+    x: 0,
+    y: 0,
+    scale: 1,
+    activeNode: null,
+    activeNodeFeature: null,
+    activeFeatureTextPosition: 0,
+    activeConnectionHandle: null,
+    mouseX: 0,
+    mouseY: 0
+}
 
 export async function makeFullGraph(dirHandle) {
     nodes = [];
@@ -39,17 +50,7 @@ export default function Editor({ state }) {
 
     settings.repulsiveForce = 10;
     
-    const View = {
-        x: 0,
-        y: 0,
-        scale: 1,
-        activeNode: null,
-        activeNodeFeature: null,
-        activeFeatureTextPosition: 0,
-        activeConnectionHandle: null,
-        mouseX: 0,
-        mouseY: 0
-    }
+    
     
     function clamp(x, a, b){
         if(x < a) return a;
@@ -385,9 +386,7 @@ export default function Editor({ state }) {
     
     
     document.addEventListener("keydown", (e) => {
-        if(e.key == "b"){
-            BFS(nodes[0]);
-        }
+        
         if(e.key == "Backspace"){
             if(View.activeNodeFeature != null){
     

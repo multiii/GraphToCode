@@ -1,7 +1,9 @@
 "use client";
 
-import Canvas, {makeFullGraph, nodes } from "./canvas"
+import Canvas, {makeFullGraph, nodes, View } from "./canvas";
 import React, { useState, useEffect, useRef } from 'react';
+
+import {BFScompilation} from "./algorithm";
 
 const FileExplorerIDE = () => {
   const [key, setKey] = useState(0);
@@ -36,6 +38,10 @@ const FileExplorerIDE = () => {
       setHeaderCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]")
       setFileCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
     }
+  }
+
+  const onCompileClick = () => {
+    BFScompilation(View.activeNode);
   }
 
   const onFileClick = () => {
@@ -323,8 +329,8 @@ const FileExplorerIDE = () => {
           </button>
           {compileMenuOpen && (
             <div className="absolute top-full left-0 bg-white shadow-md border z-10 w-48">
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
-                Compile Graph
+              <button onClick={onCompileClick} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
+                Compile Graph From Root Node
               </button>
               <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
                 Compile Selected Node
