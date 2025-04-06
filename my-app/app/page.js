@@ -3,36 +3,33 @@ import { ArrowRight } from "lucide-react"
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-[#e2f2ee]">
+    <div className="flex flex-col min-h-screen bg-[#DDF3EE]">
       {/* Header */}
       <div className="px-80">
       <header className="bg-gray-100 container mx-auto px-6 py-4 my-6 rounded-full flex justify-center-safe gap-128 items-center">
-        <div className="font-bold text-3xl text-gray-900">GraphThing</div>
+        <div className="font-bold text-3xl text-gray-900">CodeItNodeIt</div>
         <nav className="flex items-center gap-2">
           <Link href="#about" className="text-xl font-light text-gray-700 hover:text-gray-900">
             About
           </Link>
           <span className="text-gray-700">•</span>
           <Link href="#pricing" className="text-xl font-light text-gray-700 hover:text-gray-900">
-            Pricing
+            Pricing (Free)
           </Link>
           <span className="text-gray-700">•</span>
-          <Link href="#page3" className="text-xl font-light text-gray-700 hover:text-gray-900">
-            Page 3
-          </Link>
         </nav>
       </header>
       </div>
 
       {/* Main Content */}
       <main className="flex-grow">
-        <div className="bg-linear-to-b from-[#e2f2ee] to-gray-100">
+        <div className="bg-linear-to-b from-[#ddf3ee] to-white">
           {/* Hero Section */}
           <section className="container mx-auto px-24 pt-32 pb-32  text-center">
             <h1 className="text-6xl mb-12 text-gray-900">
-              Insert purpose and
+              Visualize and design code
               <br />
-              benefit here
+              like never before
             </h1>
             <Link href="/editor">
               <button className="cursor-pointer ring-3 ring-[#c1e6dd] shadow-3xl shadow-[#c1e6dd] text-gray-900 bg-white text-gray-700 px-6 py-2 rounded-full shadow-lg flex items-center gap-2 mx-auto hover:shadow-xl transition-shadow">
@@ -61,7 +58,7 @@ export default function Home() {
         </div>
 
         {/* Features Grid - Fixed to extend full width */}
-        <section className="w-full bg-[#e2f2ee] py-16">
+        <section className="w-full bg-[#ddf3ee] py-16">
           <div className="container mx-auto px-24">
             <h2 className="text-4xl mb-8 text-gray-900">Focus on large scale with our features</h2>
 
@@ -104,9 +101,9 @@ export default function Home() {
       {/* Footer */}
       <footer className="bg-[#e6f5f3] py-8 mt-16">
         <div className="container mx-auto px-24">
-          <div className="font-bold text-4xl mb-6 text-gray-900">GraphThing</div>
+          <div className="font-bold text-4xl mb-6 text-gray-900">CodeItNodeIt!</div>
 
-          <div className="grid grid-cols-2 gap-4 mb-6">
+          {/* <div className="grid grid-cols-2 gap-4 mb-6">
             <div className="space-y-2">
               <div>
                 <Link href="#" className="text-xl text-gray-700 hover:text-gray-900">
@@ -151,7 +148,7 @@ export default function Home() {
                 </Link>
               </div>
             </div>
-          </div>
+          </div> */}
 
           <div className="text-xl text-center text-gray-500 text-sm border-t pt-4">
             (C) 2025 ··· All Rights Reserved
