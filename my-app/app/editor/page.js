@@ -33,7 +33,7 @@ const FileExplorerIDE = () => {
   };
 
   const toggleViewMenu = () => {
-    setViewMenuOpen(!compileMenuOpen);
+    setViewMenuOpen(!viewMenuOpen);
     if (fileMenuOpen) setFileMenuOpen(false);
     if (compileMenuOpen) setCompileMenuOpen(false);
     if (drawMenuOpen) setDrawMenuOpen(false);
