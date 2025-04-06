@@ -22,6 +22,7 @@ export default function Editor({ state }) {
 useEffect(() => {
     if(ranEffect) return;
     ranEffect = true;
+
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
@@ -106,8 +107,8 @@ useEffect(() => {
         let descriptionText = [];
 
 
-        for(let i = 0; i < node.naturalLanguageDescription.text.length; i++){
-            if(ctx.measureText(node.naturalLanguageDescription.text.substring(pos1, pos2)).width >= node.width-30 || i == node.naturalLanguageDescription.text.length-1){
+        for(let i = 0; i <= node.naturalLanguageDescription.text.length; i++){
+            if(ctx.measureText(node.naturalLanguageDescription.text.substring(pos1, pos2)).width >= node.width-30 || i == node.naturalLanguageDescription.text.length){
                 
                 descriptionText.push(node.naturalLanguageDescription.text.substring(pos1, pos2));
                 pos1 = pos2;
@@ -376,6 +377,7 @@ useEffect(() => {
     
                 View.activeNodeFeature.text = View.activeNodeFeature.text.substring(0, View.activeFeatureTextPosition-1) + View.activeNodeFeature.text.substring(View.activeFeatureTextPosition);
                 View.activeFeatureTextPosition--;
+                if(View.activeFeatureTextPosition < 0) View.activeFeatureTextPosition = 0;
     
                 if(View.activeNodeFeature.text == ""){
                     //stupid logic 
@@ -408,7 +410,10 @@ useEffect(() => {
         }
         if(e.key.length == 1){
             if(View.activeNodeFeature != null){
-                View.activeNodeFeature.text = View.activeNodeFeature.text.substring(0, View.activeFeatureTextPosition) + e.key + View.activeNodeFeature.text.substring(View.activeFeatureTextPosition);
+                let beforeText = View.activeNodeFeature.text.slice(0, View.activeFeatureTextPosition);
+                let afterText = View.activeNodeFeature.text.slice(View.activeFeatureTextPosition);
+        
+                View.activeNodeFeature.text = beforeText + e.key + afterText;
                 View.activeFeatureTextPosition++;
             }
         }
@@ -527,7 +532,6 @@ useEffect(() => {
     // nodes[0].naturalLanguageDescription.text = "main function that calls some stuff and things and does the program";
     
     function render(){
-        console.log(nodes);
         ctx.fillStyle = RenderProperties.colors.primary;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
