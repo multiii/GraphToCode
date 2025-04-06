@@ -284,32 +284,40 @@ useEffect(() => {
     let isDragging = false;
     let lastX = 0;
     let lastY = 0;
+
+    function transformCursor(e){
+        let x = (e.clientX-canvas.offsetLeft)/canvas.offsetWidth * canvas.width;
+        let y = (e.clientY-canvas.offsetTop)/canvas.offsetHeight * canvas.height;
+        x = (x - View.x)/View.scale;
+        y = (y - View.y)/View.scale;
+        return {x, y};
+    }
     
     canvas.addEventListener("mousedown", (e) => {
         isDragging = true;
         lastX = e.clientX;
         lastY = e.clientY;
-        resolveClick(e);
+
+        if(View.activeConnectionHandle){
+            let node = findConnectionNode(transformCursor(e).x, transformCursor(e).y, "right");
+             
+            if(node == null) return;
+
+            node.dependencies.push(View.activeConnectionHandle);
+            View.activeConnectionHandle = null;
+        }
+
+        resolveClick(e);        
     });
     document.addEventListener("mouseup", (e) => {
         isDragging = false;
 
-        if(View.activeConnectionHandle){
-            let node = findConnectionNode(x, y, "right");
-            if(node == null) return;
-
-            
-        }
+        
     });
     document.addEventListener("mousemove", (e) => {
-        let x = (e.clientX-canvas.offsetLeft)/canvas.offsetWidth * canvas.width;
-        let y = (e.clientY-canvas.offsetTop)/canvas.offsetHeight * canvas.height;
-        x = (x - View.x)/View.scale;
-        y = (y - View.y)/View.scale;
-
-        View.mouseX = x;
-        View.mouseY = y;
-
+        
+        View.mouseX = transformCursor(e).x;
+        View.mouseY = transformCursor(e).y;
 
         if (!isDragging) return;
     
@@ -406,10 +414,10 @@ useEffect(() => {
         //connect nodes things
         for(let i in nodes){
             let left = getNodeLeftConnectionPoint(nodes[i]);
-            let right = getNodeLeftConnectionPoint(nodes[i]);
+            let right = getNodeRightConnectionPoint(nodes[i]);
 
             let leftSelected = (Math.hypot(x-left.x, y-left.y) < 10);
-            let rightSelected = (Math.hypot(x-right.x, y-right.y) < 10);
+            let rightSelected = (Math.hypot(x-right.x, y-right.y) < 20);
 
             if(mode == "left" && leftSelected) return nodes[i];
             if(mode == "right" && rightSelected) return nodes[i];
@@ -418,16 +426,15 @@ useEffect(() => {
     }
     
     function resolveClick(e){
-        let x = (e.clientX-canvas.offsetLeft)/canvas.offsetWidth * canvas.width;
-        let y = (e.clientY-canvas.offsetTop)/canvas.offsetHeight * canvas.height;
-        x = (x - View.x)/View.scale;
-        y = (y - View.y)/View.scale;
+        let x = transformCursor(e).x;
+        let y = transformCursor(e).y;
     
         View.activeNode = null;
         View.activeNodeFeature = null;
         View.activeConnectionHandle = null;
 
         View.activeConnectionHandle = findConnectionNode(x, y, "left");
+
 
         for(let i in nodes){
             if(isPointInNode(x, y, nodes[i])){
@@ -473,6 +480,7 @@ useEffect(() => {
     function drawHalfConnection(){
 
     }
+    
     
     nodes.push(createNode());
     nodes.push(createNode());
