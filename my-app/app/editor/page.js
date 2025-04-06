@@ -21,20 +21,20 @@ const FileExplorerIDE = () => {
     view: "file"
   });
 
-  const [headerCN, setHeaderCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
-  const [fileCN, setFileCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]");
+  const [headerCN, setHeaderCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors");
+  const [fileCN, setFileCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]");
 
-  const [mouseCN, setMouseCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]");
-  const [addCN, setAddCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
-  const [connectCN, setConnectCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
+  const [mouseCN, setMouseCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]");
+  const [addCN, setAddCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors");
+  const [connectCN, setConnectCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors");
 
   const onHeaderClick = () => {
     console.log(0, state.view)
     if (state.view == "file") {
       setState({mode: state.mode, view: "header"})
       console.log(0, state.view)
-      setHeaderCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]")
-      setFileCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
+      setHeaderCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+      setFileCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
     }
   }
 
@@ -42,8 +42,8 @@ const FileExplorerIDE = () => {
     console.log(1, state.view)
     if (state.view == "header") {
       setState({mode: state.mode, view: "file"})
-      setHeaderCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
-      setFileCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]")
+      setHeaderCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+      setFileCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
     }
   }
 
@@ -52,27 +52,27 @@ const FileExplorerIDE = () => {
   const onMouseClick = () => {
     if (state.mode == "add" || state.mode == "connect") {
       setState({view: state.view, mode: "mouse"})
-      setMouseCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]")
-      setAddCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
-      setConnectCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
+      setMouseCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+      setAddCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+      setConnectCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
     }
   }
 
   const onAddClick = () => {
     if (state.mode == "mouse" || state.mode == "connect") {
       setState({view: state.view, mode: "add"})
-      setAddCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]")
-      setMouseCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
-      setConnectCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
+      setAddCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+      setMouseCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+      setConnectCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
     }
   }
 
   const onConnectClick = () => {
     if (state.mode == "add" || state.mode == "mouse") {
       setState({view: state.view, mode: "connect"})
-      setConnectCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]")
-      setAddCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
-      setMouseCN("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors")
+      setConnectCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+      setAddCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+      setMouseCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
     }
   }
 
@@ -135,7 +135,7 @@ const FileExplorerIDE = () => {
       folder = folder.children[indices[i]];
     }
 
-    folder.children[folder.children.length] = {name: "untitled.hpp", type: "file"};
+    folder.children[folder.children.length] = {name: "Untitled.hpp", type: "file"};
     setFolderStructure(folderStructure);
     setKey(key + 1);
   }
@@ -159,6 +159,7 @@ const FileExplorerIDE = () => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
+    // Process the selected files to create a virtual folder structure
     const fileMap = new Map();
     const rootFolder = {
       name: 'WORKSPACE',
@@ -311,6 +312,13 @@ const FileExplorerIDE = () => {
               >
                 Open Folder
               </button>
+              
+              {/* <button 
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900"
+                onClick={openLinkField}
+              >
+                Open Github Link
+              </button> */}
             </div>
           )}
         </div>
@@ -335,18 +343,17 @@ const FileExplorerIDE = () => {
         {/* Blue Buttons in the middle */}
         <div className="flex-1 flex items-center justify-center gap-4">
           <div className="flex gap-1">
-            <button className={headerCN} onClick={onHeaderClick} style={{backgroundImage: "url(/header.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
-                
+            <button className={headerCN} onClick={onHeaderClick}>
             </button>
-            <button className={fileCN} onClick={onFileClick} style={{backgroundImage: "url(/file.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
+            <button className={fileCN} onClick={onFileClick}>
             </button>
           </div>
           <div className="flex gap-1">
-            <button className={mouseCN} onClick={onMouseClick} style={{backgroundImage: "url(/cursor.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
+            <button className={mouseCN} onClick={onMouseClick}>
             </button>
-            <button className={addCN}  onClick={onAddClick} style={{backgroundImage: "url(/addnode.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
+            <button className={addCN}  onClick={onAddClick}>
             </button>
-            <button className={connectCN}  onClick={onConnectClick} style={{backgroundImage: "url(/curve.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
+            <button className={connectCN}  onClick={onConnectClick}>
             </button>
           </div>
         </div>
