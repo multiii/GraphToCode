@@ -141,7 +141,7 @@ const FileExplorerIDE = () => {
       folder = folder.children[indices[i]];
     }
 
-    folder.children[folder.children.length] = {name: "untitled.hpp", type: "file"};
+    folder.children[folder.children.length] = {name: "Untitled.hpp", type: "file"};
     setFolderStructure(folderStructure);
     setKey(key + 1);
   }
@@ -165,6 +165,7 @@ const FileExplorerIDE = () => {
     const files = event.target.files;
     if (!files || files.length === 0) return;
 
+    // Process the selected files to create a virtual folder structure
     const fileMap = new Map();
     const rootFolder = {
       name: 'WORKSPACE',
@@ -317,6 +318,13 @@ const FileExplorerIDE = () => {
               >
                 Open Folder
               </button>
+              
+              {/* <button 
+                className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900"
+                onClick={openLinkField}
+              >
+                Open Github Link
+              </button> */}
             </div>
           )}
         </div>
