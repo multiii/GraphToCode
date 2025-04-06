@@ -11,7 +11,15 @@ export default function Editor() {
         x: 0,
         y: 0,
         scale: 1,
-        activeNode: null
+        activeNode: null,
+        activeNodeFeature: null,
+        activeFeatureTextPosition: 0
+    }
+    
+    function clamp(x, a, b){
+        if(x < a) return a;
+        if(x > b) return b;
+        return x;
     }
     
     const RenderProperties = {
@@ -127,21 +135,36 @@ export default function Editor() {
     
         ctx.font = "18px lexend";
         for(let i = 0; i < node.inputs.length+1; i++){
+            ctx.strokeStyle = "black";
+            
+            let editOn = (i < node.inputs.length && View.activeNodeFeature == node.inputs[i]);
+    
+            if(editOn){
+                ctx.strokeStyle = "blue"; 
+            }
             ctx.fillStyle = "white";
             ctx.beginPath();
             ctx.roundRect(node.x+4, node.y+inputTop-10, node.width-8, 25, 5);
             ctx.fill();
             ctx.stroke();
             ctx.fillStyle = "black";
+    
+            if(editOn && Math.sin(Date.now()/200) > 0){
+                ctx.fillStyle = "black";  
+                ctx.fillRect(node.x + 8 + ctx.measureText(node.inputs[i].text.substring(0, View.activeFeatureTextPosition)).width,
+                 node.y+inputTop-5, 2, 18);
+            }
+            
             if(i == node.inputs.length){
                 ctx.fillStyle = "gray";
                 ctx.fillText("Add input...", node.x+8, node.y+inputTop+10);
             } else {
-            ctx.fillText("REPLACE WITH INPUT TEXT", node.x+8, node.y+inputTop+10);
+                ctx.fillText(node.inputs[i].text, node.x+8, node.y+inputTop+10);
             }
             inputTop += 29;
         }
         
+        ctx.strokeStyle = "black";
         ctx.font = "15px lexend";
         ctx.fillStyle = "black";
         ctx.fillText("DESCRIPTION", node.x+4, node.y+inputTop+5);
@@ -154,11 +177,15 @@ export default function Editor() {
         ctx.roundRect(node.x+4, node.y+inputTop-10, node.width-8, descriptionHeight, 5);
         ctx.fill();
         ctx.stroke();
-        inputTop += 29;
     
-        node.height = computedHeight;
+        ctx.fillStyle = "black";
+        ctx.font = "18px lexend";
+        ctx.fillText(node.naturalLanguageDescription, node.x+8, node.y+inputTop+10);
     
         
+        inputTop += 29;
+        
+        node.height = computedHeight;
     }
     
     function renderConnections(node){
@@ -223,6 +250,40 @@ export default function Editor() {
     });
     
     
+    document.addEventListener("keydown", (e) => {
+        if(e.key == "Backspace"){
+            if(View.activeNodeFeature != null){
+    
+                View.activeNodeFeature.text = View.activeNodeFeature.text.substring(0, View.activeFeatureTextPosition-1) + View.activeNodeFeature.text.substring(View.activeFeatureTextPosition);
+                View.activeFeatureTextPosition--;
+    
+                if(View.activeNodeFeature.text == ""){
+                    //stupid logic 
+                    for(let i = 0; i < View.activeNode.inputs.length; i++){
+                        if(View.activeNodeFeature == View.activeNode.inputs[i]){
+                            View.activeNode.inputs.splice(i, 1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        if(e.key == "ArrowRight"){
+            if(View.activeNodeFeature != null){
+                View.activeFeatureTextPosition = clamp(View.activeFeatureTextPosition+1, 0, View.activeNodeFeature.text.length);
+            }
+        }
+        if(e.key == "ArrowLeft"){
+            View.activeFeatureTextPosition = clamp(View.activeFeatureTextPosition-1, 0, 100000000000);
+        }
+        if(e.key.length == 1){
+            if(View.activeNodeFeature != null){
+                View.activeNodeFeature.text = View.activeNodeFeature.text.substring(0, View.activeFeatureTextPosition) + e.key + View.activeNodeFeature.text.substring(View.activeFeatureTextPosition);
+                View.activeFeatureTextPosition++;
+            }
+        }
+    });
+    
     canvas.addEventListener('wheel', (e) => {
         e.preventDefault(); 
         let zoomSpeed = 0.001; 
@@ -264,9 +325,28 @@ export default function Editor() {
         y = (y - View.y)/View.scale;
     
         View.activeNode = null;
+        View.activeNodeFeature = null;
         for(let i in nodes){
-            if(isPointInNode(x,y, nodes[i])){
+            if(isPointInNode(x, y, nodes[i])){
                 View.activeNode = nodes[i];
+    
+                let node = nodes[i];
+                //68 = top of inputs
+                for(let j = 0; j < nodes[i].inputs.length+1; j++){
+                    if(isPointInNode(x, y, {x: node.x, y: node.y+60+29*j, width: node.width, height: 29})){
+                        if(j == node.inputs.length){
+                            node.inputs.push({text: ""});
+                            
+                        }
+                        View.activeFeatureTextPosition = node.inputs[j].text.length;
+                        View.activeNodeFeature = node.inputs[j];
+                        //alert("a");
+                    }
+                }
+    
+                if(isPointInNode(x, y, getNodeLeftConnectionPoint(node))){
+                    //activeNodeFeature = k
+                }
             }
         }
     }
@@ -274,7 +354,10 @@ export default function Editor() {
     nodes.push(createNode());
     nodes.push(createNode());
     nodes.push(createNode());
-    nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
+    nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; 
+    nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
+    nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
+    nodes[0].naturalLanguageDescription = "main function that calls some functions";
     
     function render(){
         ctx.clearRect(0, 0, canvas.width, canvas.height);
