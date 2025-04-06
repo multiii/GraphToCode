@@ -18,8 +18,10 @@ export default function Editor({ state }) {
     stateRef.current = state
     }, [state])
 
-    
+    let ranEffect = false;
 useEffect(() => {
+    if(ranEffect) return;
+    ranEffect = true;
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
     
