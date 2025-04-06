@@ -19,12 +19,24 @@ export default function Editor({ state }) {
     }, [state])
 
     let ranEffect = false;
-useEffect(() => {
+    useEffect(() => {
     if(ranEffect) return;
     ranEffect = true;
 
     const canvas = canvasRef.current;
     const ctx = canvas.getContext('2d');
+
+    const settings = {
+        width: canvas.width,
+        height: canvas.height,
+        iterations: 1000,
+        area: canvas.width * canvas.height,
+        gravity: 10,
+        speed: 1.00,
+        margin: 25,
+    };
+
+    settings.repulsiveForce = 10;
     
     const View = {
         x: 0,
@@ -352,17 +364,18 @@ useEffect(() => {
 
         if (!isDragging) return;
     
+        console.log(View.scale);
         let dx = e.clientX - lastX;
         let dy = e.clientY - lastY;
-        dx *= 1/View.scale;
-        dy *= 1/View.scale;
+        dx *= 1.5;
+        dy *= 1.5;
     
         if(View.activeNode == null){
             View.x += dx;
             View.y += dy;
         } else {
-            View.activeNode.x += dx;
-            View.activeNode.y += dy;
+            View.activeNode.x += dx / View.scale;
+            View.activeNode.y += dy / View.scale;
         }
         lastX = e.clientX;
         lastY = e.clientY;
@@ -522,6 +535,152 @@ useEffect(() => {
         }
     }
 
+    function collisionDetection() {
+        nodes.forEach((node, i) => {
+            nodes.forEach((otherNode, j) => {
+                if (i === j) return; 
+                if (
+                    node.x - settings.margin < otherNode.x + otherNode.width + settings.margin &&
+                    node.x + node.width + settings.margin > otherNode.x - settings.margin &&
+                    node.y - settings.margin < otherNode.y + otherNode.height + settings.margin &&
+                    node.y + node.height + settings.margin > otherNode.y - settings.margin
+                ) {
+                    const overlapX = Math.min(
+                        node.x + node.width + settings.margin - (otherNode.x - settings.margin),
+                        otherNode.x + otherNode.width + settings.margin - (node.x - settings.margin)
+                    );
+                    const overlapY = Math.min(
+                        node.y + node.height + settings.margin - (otherNode.y - settings.margin),
+                        otherNode.y + otherNode.height + settings.margin - (node.y - settings.margin)
+                    );
+
+                    if (overlapX < overlapY) {
+                        if (node.x < otherNode.x) {
+                            node.x -= overlapX / 2;
+                            otherNode.x += overlapX / 2;
+                        } else {
+                            node.x += overlapX / 2;
+                            otherNode.x -= overlapX / 2;
+                        }
+                    } else {
+                        if (node.y < otherNode.y) {
+                            node.y -= overlapY / 2;
+                            otherNode.y += overlapY / 2;
+                        } else {
+                            node.y += overlapY / 2;
+                            otherNode.y -= overlapY / 2;
+                        }
+                    }
+                }
+            });
+        });
+    }
+
+
+    function resolveLineCollisions() {
+        const getCenter = (node) => ({
+            x: node.x + node.width / 2,
+            y: node.y + node.height / 2,
+        });
+
+        function lineIntersectsNode(x1, y1, x2, y2, node) {
+            const left = node.x;
+            const right = node.x + node.width + settings.margin;
+            const top = node.y;
+            const bottom = node.y + node.height + settings.margin;
+
+            return (
+                lineIntersectsLine(x1, y1, x2, y2, left, top, right, top) || // top
+                lineIntersectsLine(x1, y1, x2, y2, right, top, right, bottom) || // right
+                lineIntersectsLine(x1, y1, x2, y2, right, bottom, left, bottom) || // bottom
+                lineIntersectsLine(x1, y1, x2, y2, left, bottom, left, top) // left
+            );
+        }
+
+        function lineIntersectsLine(x1, y1, x2, y2, x3, y3, x4, y4) {
+            const den = (x1 - x2) * (y3 - y4) - (y1 - y2) * (x3 - x4);
+            if (den === 0) return false;
+
+            const t = ((x1 - x3) * (y3 - y4) - (y1 - y3) * (x3 - x4)) / den;
+            const u = -((x1 - x2) * (y1 - y3) - (y1 - y2) * (x1 - x3)) / den;
+
+            return t >= 0 && t <= 1 && u >= 0 && u <= 1;
+        }
+
+        nodes.forEach(source => {
+            const start = getCenter(source);
+
+            source.dependencies.forEach(target => {
+                const end = getCenter(target);
+
+                nodes.forEach(other => {
+                    if (other === source || other === target) return;
+
+                    if (lineIntersectsNode(start.x, start.y, end.x, end.y, other)) {
+                        // Nudge the node away (e.g., simple push right/down)
+                        other.x += 10;
+                        other.y += 10;
+                    }
+                });
+            });
+        });
+    }
+
+
+
+
+
+    function applyForces () {
+        nodes.forEach(node => {
+            node.dx = 0;
+            node.dy = 0;
+
+            nodes.forEach(otherNode=>{
+                if (node != otherNode) {
+                    let dx = node.x - otherNode.x;
+                    let dy = node.y - otherNode.y;
+                    let distance = Math.sqrt(dx * dx + dy * dy) + 0.01;
+                    if (distance > 300) distance = 100000;
+                    let repulsiveForce = (settings.repulsiveForce * settings.repulsiveForce) / distance;
+                    node.dx += (dx / distance) * repulsiveForce;
+                    node.dy += (dy / distance) * repulsiveForce;
+                }
+            });
+
+            node.dependencies.forEach(otherNode=> {
+                let source = node;
+                let target = otherNode; 
+                let dx = target.x - source.x;
+                let dy = target.y - source.y;
+                let distance = Math.sqrt(dx * dx + dy * dy) + 0.01;
+
+                if (distance < 300) distance = 0;
+
+                let attractiveForce = (distance * distance) / 4000;
+
+                attractiveForce = Math.max(0, Math.min(attractiveForce, 2));
+                
+                source.dx += (dx / distance) * attractiveForce;
+                source.dy += (dy / distance) * attractiveForce;
+                target.dx -= (dx / distance) * attractiveForce;
+                target.dy -= (dy / distance) * attractiveForce;
+            });
+        });
+
+
+        nodes.forEach(node => {
+            let distance = Math.sqrt(node.dx * node.dx + node.dy * node.dy);
+            if (distance > 0) {
+                let limitedDistance = Math.min(settings.speed * distance, distance);
+                node.x += (node.dx / distance) * limitedDistance;
+                node.y += (node.dy / distance) * limitedDistance;
+            }
+
+            // node.x = Math.min(settings.width, Math.max(0, node.x));
+            // node.y = Math.min(settings.height, Math.max(0, node.y));
+        });
+    }
+
     
     // nodes.push(createNode());
     // nodes.push(createNode());
@@ -540,6 +699,10 @@ useEffect(() => {
     
         ctx.translate(View.x, View.y);
         ctx.scale(View.scale, View.scale);
+
+        // applyForces();
+        collisionDetection();
+        resolveLineCollisions();
 
         for(let i in nodes)
             renderNode(nodes[i]);

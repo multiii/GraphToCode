@@ -128,6 +128,8 @@ export async function addNodes(nodes_array, dirHandle) {
     console.log(nodes);
 
     for (const node of nodes) {
+        node.x = Math.random() * 2 - 1;
+        node.y = Math.random() * 2 - 1;
         nodes_array.push(node);
     }
 
