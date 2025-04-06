@@ -478,9 +478,6 @@ useEffect(() => {
         }
     }
 
-    function drawHalfConnection(){
-
-    }
     
     
     nodes.push(createNode());
