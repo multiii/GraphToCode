@@ -711,7 +711,7 @@ export default function Editor({ state }) {
 
         // applyForces();
         collisionDetection();
-        // resolveLineCollisions();
+        resolveLineCollisions();
 
         for(let i in nodes)
             renderNode(nodes[i]);
