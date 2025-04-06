@@ -16,7 +16,8 @@ const View = {
     x: 0,
     y: 0,
     scale: 1,
-    activeNode: null
+    activeNode: null,
+    activeNodeFeature: null
 }
 
 const RenderProperties = {
@@ -138,11 +139,14 @@ function renderNode(node){
         ctx.fill();
         ctx.stroke();
         ctx.fillStyle = "black";
+        if(View.activeNodeFeature == node.inputs[i]){
+            ctx.fillStyle = "red";
+        }
         if(i == node.inputs.length){
             ctx.fillStyle = "gray";
             ctx.fillText("Add input...", node.x+8, node.y+inputTop+10);
         } else {
-        ctx.fillText("REPLACE WITH INPUT TEXT", node.x+8, node.y+inputTop+10);
+            ctx.fillText(node.inputs[i].text, node.x+8, node.y+inputTop+10);
         }
         inputTop += 29;
     }
@@ -159,11 +163,15 @@ function renderNode(node){
     ctx.roundRect(node.x+4, node.y+inputTop-10, node.width-8, descriptionHeight, 5);
     ctx.fill();
     ctx.stroke();
-    inputTop += 29;
 
-    node.height = computedHeight;
+    ctx.fillStyle = "black";
+    ctx.font = "18px lexend";
+    ctx.fillText(node.naturalLanguageDescription, node.x+8, node.y+inputTop+10);
 
     
+    inputTop += 29;
+    
+    node.height = computedHeight;
 }
 
 function renderConnections(node){
@@ -272,6 +280,19 @@ function resolveClick(e){
     for(let i in nodes){
         if(isPointInNode(x,y, nodes[i])){
             View.activeNode = nodes[i];
+
+            let node = nodes[i];
+            //68 = top of inputs
+            for(let i = 0;  i < nodes[i].inputs.length; i++){
+                if(isPointInNode(x, y, {x: node.x, y: node.y+68+29*i, width: node.width, height: 29})){
+                    View.activeNodeFeature = nodes[i].input;
+                    
+                }
+            }
+
+            if(isPointInNode(x, y, getNodeLeftConnectionPoint(node))){
+                //activeNodeFeature = k
+            }
         }
     }
 }
@@ -280,6 +301,8 @@ nodes.push(createNode());
 nodes.push(createNode());
 nodes.push(createNode());
 nodes[0].nodeType = "int"; nodes[0].nodeName = "main"; nodes[0].dependencies.push(nodes[1]); nodes[0].dependencies.push(nodes[2]);
+nodes[0].inputs = [{text: "int argc"}, {text: "const char* argv[]"}];
+nodes[0].naturalLanguageDescription = "main function that calls some functions";
 
 function render(){
     ctx.clearRect(0, 0, canvas.width, canvas.height);
