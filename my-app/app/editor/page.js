@@ -1,6 +1,6 @@
 "use client";
 
-import Canvas, {makeFullGraph, nodes, View } from "./canvas";
+import Canvas, {makeFullGraph, nodes, View} from "./canvas";
 import React, { useState, useEffect, useRef } from 'react';
 
 import {BFScompilation} from "./algorithm";
@@ -23,12 +23,17 @@ const FileExplorerIDE = () => {
     view: "file"
   });
 
+  const [showLinkInput, setShowLinkInput] = useState(false);
+  const [githubLink, setGithubLink] = useState('');
+  const [basePath, setBasePath] = useState('');
+
   const [headerCN, setHeaderCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
   const [fileCN, setFileCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]");
 
   const [mouseCN, setMouseCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors bg-[#c3e5dd]");
   const [addCN, setAddCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
   const [connectCN, setConnectCN] = useState("p-4 border-2 border-gray-300 text-white rounded-md shadow-sm transition-colors");
+  
 
   const onHeaderClick = () => {
     console.log(0, state.view)
@@ -82,6 +87,16 @@ const FileExplorerIDE = () => {
     }
   }
 
+  const onOpenClick = () => {
+    // open in vscode
+    function joinPaths(basePath, relativePath) {
+      return basePath.replace(/[\\/]+$/, '') + '/' + relativePath.replace(/^[\\/]+/, '');
+    }
+
+    const fullPath = joinPaths(basePath, View.activeNode.filePath);
+    window.location.href = "vscode://file/" + encodeURIComponent(fullPath) + ":" + View.activeNode.lineNumber;
+  }
+
   const toggleFileMenu = () => {
     setFileMenuOpen(!fileMenuOpen);
     if (compileMenuOpen) setCompileMenuOpen(false);
@@ -94,6 +109,8 @@ const FileExplorerIDE = () => {
 
   const openFileExplorer = async () => {
     const dirHandle = await window.showDirectoryPicker();
+    const basePath = prompt("Enter full base path of the selected folder (for VSCODE integration) or just press enter if you don't care :O");
+    setBasePath(basePath);
 
     const folder = await readDirectory(dirHandle);
 
@@ -285,6 +302,11 @@ const FileExplorerIDE = () => {
     }
   };
 
+  const openLinkField = () => {
+    setShowLinkInput(true);
+    setFileMenuOpen(false);
+  }
+
   useEffect(() => {
     const handleKeyDown = (event) => {
       if (event.key === 'Delete') {
@@ -319,12 +341,12 @@ const FileExplorerIDE = () => {
                 Open Folder
               </button>
               
-              {/* <button 
+              <button 
                 className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900"
                 onClick={openLinkField}
               >
                 Open Github Link
-              </button> */}
+              </button>
             </div>
           )}
         </div>
@@ -362,9 +384,46 @@ const FileExplorerIDE = () => {
             </button>
             <button className={connectCN}  onClick={onConnectClick} style={{backgroundImage: "url(/curve.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
             </button>
+            <button className={connectCN}  onClick={onOpenClick} style={{backgroundImage: "url(/vscode.png)", backgroundRepeat: "no-repeat", backgroundSize: "cover"}}>
+            </button> 
           </div>
         </div>
       </div>
+
+      {/* GitHub Link Input Field */}
+      {showLinkInput && (
+        <div className="p-4 bg-blue-50 border-b border-blue-200 flex items-center gap-4">
+          <input
+            type="text"
+            placeholder="Paste GitHub URL here..."
+            className="flex-1 px-3 py-2 border rounded"
+            value={githubLink}
+            onChange={(e) => setGithubLink(e.target.value)}
+          />
+          <button
+            className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+            onClick={async () => {
+              if (!githubLink.startsWith("http")) {
+                alert("Please enter a valid URL.");
+                return;
+              }
+
+              setShowLinkInput(false);
+              console.log("Handling GitHub link:", githubLink);
+
+              // Your logic to use the link goes here
+            }}
+          >
+            Open Link
+          </button>
+          <button
+            className="text-gray-600 hover:text-black"
+            onClick={() => setShowLinkInput(false)}
+          >
+            Cancel
+          </button>
+        </div>
+      )}
 
       {/* Main Content */}
       <div className="flex flex-1 overflow-hidden">
@@ -397,6 +456,7 @@ const FileExplorerIDE = () => {
         </div>
       </div>
     </div>
+
   );
 };
 

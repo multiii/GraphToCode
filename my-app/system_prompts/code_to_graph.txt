@@ -19,7 +19,8 @@ nodes: [
         "inputs": [], # arguments for class constructors, functions, etc... ex. type name, type name | it's an array of strings
         "naturalLanguageDescription": "",
         "code": "",
-        "filePath": "",
+        "lineNumber": , # the line number where this symbol is located in the file
+        "filePath": "", # the full file path
         "nodeNamespace": "", # if applicable (in this case treat classes as namespaces too. to if a class is in a namespace just do namespace::class for this field)
     }
 ]

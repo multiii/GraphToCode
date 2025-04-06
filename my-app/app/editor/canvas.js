@@ -360,7 +360,8 @@ export default function Editor({ state }) {
         
     });
     document.addEventListener("mousemove", (e) => {
-        
+        // console.log(View.x);
+        // console.log(View.y);
         View.mouseX = transformCursor(e).x;
         View.mouseY = transformCursor(e).y;
 
@@ -710,7 +711,7 @@ export default function Editor({ state }) {
 
         // applyForces();
         collisionDetection();
-        // resolveLineCollisions();
+        resolveLineCollisions();
 
         for(let i in nodes)
             renderNode(nodes[i]);
