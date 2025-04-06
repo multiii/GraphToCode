@@ -7,8 +7,6 @@ const FileExplorerIDE = () => {
   const [key, setKey] = useState(0);
   const [fileMenuOpen, setFileMenuOpen] = useState(false);
   const [compileMenuOpen, setCompileMenuOpen] = useState(false);
-  const [viewMenuOpen, setViewMenuOpen] = useState(false);
-  const [drawMenuOpen, setDrawMenuOpen] = useState(false);
   const [folderStructure, setFolderStructure] = useState({
     name: 'WORKSPACE',
     type: 'folder',
@@ -17,38 +15,75 @@ const FileExplorerIDE = () => {
   });
   const [selectedFile, setSelectedFile] = useState(null);
   const [fileInputRef] = useState(React.createRef());
-  const hasRun = useRef(false);
-  const state = {
+
+  const [state, setState] = useState({
     mode: "mouse",
     view: "file"
-  };
+  });
+
+  const [headerCN, setHeaderCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors");
+  const [fileCN, setFileCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]");
+
+  const [mouseCN, setMouseCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]");
+  const [addCN, setAddCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors");
+  const [connectCN, setConnectCN] = useState("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors");
+
+  const onHeaderClick = () => {
+    console.log(0, state.view)
+    if (state.view == "file") {
+      setState({mode: state.mode, view: "header"})
+      console.log(0, state.view)
+      setHeaderCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+      setFileCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+    }
+  }
+
+  const onFileClick = () => {
+    console.log(1, state.view)
+    if (state.view == "header") {
+      setState({mode: state.mode, view: "file"})
+      setHeaderCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+      setFileCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+    }
+  }
+
+  //
+
+  const onMouseClick = () => {
+    if (state.mode == "add" || state.mode == "connect") {
+      setState({view: state.view, mode: "mouse"})
+      setMouseCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+      setAddCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+      setConnectCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+    }
+  }
+
+  const onAddClick = () => {
+    if (state.mode == "mouse" || state.mode == "connect") {
+      setState({view: state.view, mode: "add"})
+      setAddCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+      setMouseCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+      setConnectCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+    }
+  }
+
+  const onConnectClick = () => {
+    if (state.mode == "add" || state.mode == "mouse") {
+      setState({view: state.view, mode: "connect"})
+      setConnectCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors bg-[#5ea990]")
+      setAddCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+      setMouseCN("p-4 border-2 border-blue-500 text-white rounded-md shadow-sm transition-colors")
+    }
+  }
 
   const toggleFileMenu = () => {
     setFileMenuOpen(!fileMenuOpen);
     if (compileMenuOpen) setCompileMenuOpen(false);
-    if (drawMenuOpen) setDrawMenuOpen(false);
-    if (viewMenuOpen) setViewMenuOpen(false);
   };
 
   const toggleCompileMenu = () => {
     setCompileMenuOpen(!compileMenuOpen);
     if (fileMenuOpen) setFileMenuOpen(false);
-    if (drawMenuOpen) setDrawMenuOpen(false);
-    if (viewMenuOpen) setViewMenuOpen(false);
-  };
-
-  const toggleViewMenu = () => {
-    setViewMenuOpen(!viewMenuOpen);
-    if (fileMenuOpen) setFileMenuOpen(false);
-    if (compileMenuOpen) setCompileMenuOpen(false);
-    if (drawMenuOpen) setDrawMenuOpen(false);
-  };
-
-  const toggleDrawMenu = () => {
-    setDrawMenuOpen(!drawMenuOpen);
-    if (compileMenuOpen) setCompileMenuOpen(false);
-    if (fileMenuOpen) setFileMenuOpen(false);
-    if (viewMenuOpen) setViewMenuOpen(false);
   };
 
   const openFileExplorer = () => {
@@ -68,7 +103,7 @@ const FileExplorerIDE = () => {
       folder = folder.children[indices[i]];
     }
 
-    folder.children[folder.children.length] = {name: "test.pdf", type: "file"};
+    folder.children[folder.children.length] = {name: "Untitled.hpp", type: "file"};
     setFolderStructure(folderStructure);
     setKey(key + 1);
   }
@@ -220,9 +255,6 @@ const FileExplorerIDE = () => {
   };
 
   useEffect(() => {
-    if (hasRun.current) return;
-    hasRun.current = true;
-
     const handleKeyDown = (event) => {
       if (event.key === 'Delete') {
         deleteFile();
@@ -250,7 +282,7 @@ const FileExplorerIDE = () => {
       />
 
       {/* Top Menu Bar */}
-      <div className="flex border-b">
+      <div className="flex border-b py-2">
         <div className="relative">
           <button 
             className="px-4 py-2 hover:bg-gray-200 text-gray-900" 
@@ -287,44 +319,22 @@ const FileExplorerIDE = () => {
             </div>
           )}
         </div>
-        <div className="relative">
-          <button 
-            className="px-4 py-2 hover:bg-gray-200 text-gray-900" 
-            onClick={toggleViewMenu}
-          >
-            View
-          </button>
-          {viewMenuOpen && (
-            <div className="absolute top-full left-0 bg-white shadow-md border z-10 w-48">
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
-                File View
-              </button>
-              <button className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
-                Header View
-              </button>
-            </div>
-          )}
-        </div>
-        <div className="relative">
-          <button 
-            className="px-4 py-2 hover:bg-gray-200 text-gray-900" 
-            onClick={toggleDrawMenu}
-          >
-            Draw
-          </button>
-          {drawMenuOpen && (
-            <div className="absolute top-full left-0 bg-white shadow-md border z-10 w-48">
-              <button onClick={() => {state.mode = "mouse"}} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
-                Mouse
-              </button>
-              <button onClick={() => {state.mode = "add"}} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
-                Add Node
-              </button>
-              <button onClick={() => {state.mode = "connect"}} className="w-full text-left px-4 py-2 hover:bg-gray-100 text-gray-900">
-                Add Connector
-              </button>
-            </div>
-          )}
+        {/* Blue Buttons in the middle */}
+        <div className="flex-1 flex items-center justify-center gap-4">
+          <div className="flex gap-1">
+            <button className={headerCN} onClick={onHeaderClick}>
+            </button>
+            <button className={fileCN} onClick={onFileClick}>
+            </button>
+          </div>
+          <div className="flex gap-1">
+            <button className={mouseCN} onClick={onMouseClick}>
+            </button>
+            <button className={addCN}  onClick={onAddClick}>
+            </button>
+            <button className={connectCN}  onClick={onConnectClick}>
+            </button>
+          </div>
         </div>
       </div>
 
