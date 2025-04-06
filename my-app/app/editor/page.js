@@ -342,7 +342,7 @@ const FileExplorerIDE = () => {
         </div>
 
         {/* Main Editor Area */}
-        <div className="flex-1 p-4 bg-white">
+        <div className="flex-1 bg-white">
             {/* {selectedFile ? 
               <p>Currently selected: {selectedFile}</p> : 
               <p>Select a file to begin editing</p>

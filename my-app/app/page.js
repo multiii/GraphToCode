@@ -3,7 +3,7 @@ import { ArrowRight } from "lucide-react"
 
 export default function Home() {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-100">
+    <div className="flex flex-col min-h-screen bg-[#e2f2ee]">
       {/* Header */}
       <header className="bg-gray-100 container mx-auto px-24 py-6 flex justify-between items-center">
         <div className="font-bold text-3xl text-gray-900">GraphThing</div>
@@ -83,7 +83,8 @@ export default function Home() {
         </section>
 
         {/* Integration Points */}
-        <section className="container mx-auto px-24 py-8">
+        <section className="w-full py-8 bg-gray-100">
+          <div className="container mx-full px-24">
           <ul className="space-y-4">
             <li className="flex items-center gap-3 border-b-4 border-[#c0cdca] pb-4">
               <div className="w-3 h-3 rounded-full bg-gray-300"></div>
@@ -94,6 +95,7 @@ export default function Home() {
               <span className="font-medium text-gray-900 text-2xl">Blah blah</span>
             </li>
           </ul>
+          </div>
         </section>
       </main>
 
