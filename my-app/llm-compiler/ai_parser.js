@@ -111,9 +111,9 @@ export async function codeToNodes() {
     return nodes;
 }
 
-export async function addNodes(nodes_array) {
-    console.log("Add Nodes Called!");
-    const dirHandle = await window.showDirectoryPicker();
+export async function addNodes(nodes_array, dirHandle) {
+    // console.log("Add Nodes Called!");
+    // const dirHandle = await window.showDirectoryPicker();
 
     const prompt = await constructCodeToGraphPrompt(dirHandle);
     console.log(prompt);

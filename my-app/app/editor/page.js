@@ -1,6 +1,6 @@
 "use client";
 
-import Canvas, {nodes } from "./canvas"
+import Canvas, {makeFullGraph, nodes } from "./canvas"
 import React, { useState, useEffect, useRef } from 'react';
 
 const FileExplorerIDE = () => {
@@ -90,6 +90,9 @@ const FileExplorerIDE = () => {
     const dirHandle = await window.showDirectoryPicker();
 
     const folder = await readDirectory(dirHandle);
+
+    makeFullGraph(dirHandle);
+
     setFolderStructure(folder);
     setFileMenuOpen(false);
   };
