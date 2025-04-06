@@ -95,15 +95,19 @@ const FileExplorerIDE = () => {
   };
 
   const createFile = () => {
-    let indices = selectedFile.split("\n")[0].split(",");
-    indices.pop();
     let folder = folderStructure;
 
-    for (let i = 0; i < indices.length; i++) {
-      folder = folder.children[indices[i]];
+    if (selectedFile != null) {
+      let indices = selectedFile.split("\n")[0].split(",");
+      indices.pop();
+      
+      for (let i = 0; i < indices.length; i++) {
+        folder = folder.children[indices[i]];
+      }
     }
 
     folder.children[folder.children.length] = {name: "Untitled.hpp", type: "file"};
+
     setFolderStructure(folderStructure);
     setKey(key + 1);
   }
